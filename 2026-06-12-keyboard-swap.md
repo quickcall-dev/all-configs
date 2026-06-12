@@ -22,18 +22,27 @@ Physical keyboard firmware or hardware misreporting keycodes. Option key sends c
 
 ## Fix
 
-Added `simple_modifications` to Karabiner `~/.config/karabiner/karabiner.json`:
+Added `complex_modifications` rule to Karabiner `~/.config/karabiner/karabiner.json`. Simple_modifications format was wrong (`to` needs bare object, not array). Complex_modifications uses array format for `to` which works correctly.
+
+Restart Karabiner required after config change.
 
 ```json
 {
-  "simple_modifications": [
-    { "from": { "key_code": "left_command" }, "to": [{ "key_code": "left_option" }] },
-    { "from": { "key_code": "left_option"  }, "to": [{ "key_code": "left_command" }] }
+  "description": "Fix swapped left cmd/option",
+  "manipulators": [
+    {
+      "type": "basic",
+      "from": { "key_code": "left_command" },
+      "to": [{ "key_code": "left_option" }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "left_option" },
+      "to": [{ "key_code": "left_command" }]
+    }
   ]
 }
 ```
-
-This swaps the keycodes back at the Karabiner layer, effectively canceling out the hardware misreport.
 
 ## Notes
 
