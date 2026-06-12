@@ -4,6 +4,10 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = { "markdown" },
     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = {},
+    opts = {
+      bullet = { enabled = false },
+      checkbox = { enabled = false },
+      dash = { enabled = false },
+    },
   },
 }
