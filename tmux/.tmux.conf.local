@@ -95,6 +95,7 @@ bind q confirm-before -p "kill pane? (y/n)" kill-pane
 bind Q confirm-before -p "kill window? (y/n)" kill-window
 
 # ─── Copy mode ────────────────────────────────────────────────────────
+set -g mode-keys vi
 unbind Enter
 bind Escape copy-mode
 
