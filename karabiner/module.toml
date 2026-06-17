@@ -1,0 +1,3 @@
+name = "karabiner"
+description = "Karabiner-Elements key remaps"
+platforms = ["mac"]
