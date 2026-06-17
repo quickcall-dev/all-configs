@@ -1,0 +1,3 @@
+name = "zoxide"
+description = "Smarter cd command with learning and fzf integration"
+platforms = ["mac", "linux"]
