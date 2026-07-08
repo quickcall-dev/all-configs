@@ -1,0 +1,3 @@
+name = "uv"
+description = "Astral uv — fast Python package and project manager"
+platforms = ["mac", "linux"]

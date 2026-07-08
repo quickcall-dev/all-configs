@@ -31,6 +31,7 @@ cd all-configs
 | **ssh-keygen** | Generate SSH keys, update `~/.ssh/config`, test GitHub auth |
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
+| **uv** | Astral uv — fast Python package and project manager |
 | **zoxide** | Smarter `cd` command with learning and fzf integration |
 
 ## Standalone usage
