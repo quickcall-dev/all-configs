@@ -83,7 +83,7 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   chmod 600 "$CONFIG_FILE"
 fi
 
-HOST_ALIAS="${HOSTNAME%%.*}"
+HOST_ALIAS="$HOSTNAME"
 
 # Remove existing block for this host if present
 if grep -q "# ssh-keygen: $HOST_ALIAS" "$CONFIG_FILE" 2>/dev/null; then
