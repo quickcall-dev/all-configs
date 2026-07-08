@@ -39,7 +39,7 @@ step "Installing Hugging Face CLI"
 if command -v hf &> /dev/null; then
   ok "hf ${D}$(hf --version)${R}"
 else
-  warn "hf not found — installing via hf.co/install.sh"
+  warn "hf not found - installing via hf.co/install.sh"
   curl -LsSf https://hf.co/cli/install.sh | bash
 
   # Add to PATH if installed in a user-local directory
@@ -47,7 +47,7 @@ else
     for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
       [[ -f "$rc" ]] || continue
       if ! grep -q "\.local/bin" "$rc" 2>/dev/null; then
-        printf n# hf clinexport PATH=/Users/sagar/.local/bin:/Users/sagar/.pi/agent/bin:/Users/sagar/.bun/bin:/Users/sagar/.railway/bin:/Users/sagar/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/homebrew/bin:/Applications/Ghostty.app/Contents/MacOSn >> "$rc"
+        printf '\n# hf cli\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$rc"
         ok "added ~/.local/bin to PATH in $(basename "$rc")"
       else
         ok "~/.local/bin already in PATH in $(basename "$rc")"
@@ -73,7 +73,7 @@ if [[ -n "$TOKEN" ]]; then
   hf auth login --token "$TOKEN" --add-to-git-credential
   ok "HF authentication saved"
 else
-  warn "No HF_TOKEN provided — run hf auth login manually"
+  warn "No HF_TOKEN provided - run hf auth login manually"
 fi
 
 echo ""
