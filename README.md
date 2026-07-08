@@ -77,7 +77,11 @@ Copy the printed public key and add it to the target host.
 - macOS or Linux
 - `bash` 4+
 - `git`, `curl`
+- `sudo` access (modules install system packages like `build-essential`, `fontconfig`, `gh`, `nodejs`, `nvim`, `uv`)
+- On headless/VM setups: **passwordless sudo** is recommended so modules can install packages without prompts
 - Optional: `jq` for statusline, `python3.11+` or `uv` for the TUI installer
+
+If you cannot use passwordless sudo, run the relevant module as root or install the system dependencies manually first.
 
 ## Adding a new module
 
