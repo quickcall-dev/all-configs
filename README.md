@@ -32,6 +32,7 @@ cd all-configs
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
 | **uv** | Astral uv — fast Python package and project manager |
+| **hf** | Hugging Face CLI (hf) via hf.co/install.sh |
 | **zoxide** | Smarter `cd` command with learning and fzf integration |
 
 ## Standalone usage
