@@ -9,6 +9,25 @@ FONT_VERSION="v3.2.1"
 FONT_NAME="Meslo"
 ZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/${FONT_VERSION}/${FONT_NAME}.zip"
 
+step "Ensuring font dependencies"
+ensure_cmd unzip unzip
+if ! command -v fc-cache &> /dev/null; then
+    warn "fontconfig not found — installing"
+    if [[ "$PLATFORM" == "mac" ]]; then
+        ensure_cmd brew brew
+        brew install fontconfig
+    else
+        sudo apt-get update -qq && sudo apt-get install -y -qq fontconfig
+    fi
+    if command -v fc-cache &> /dev/null; then
+        ok "fontconfig installed"
+    else
+        warn "fontconfig install may have failed - continuing without font cache refresh"
+    fi
+else
+    ok "fontconfig"
+fi
+
 step "Installing ${FONT_NAME} Nerd Font"
 
 if [[ "$PLATFORM" == "mac" ]]; then

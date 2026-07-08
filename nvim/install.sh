@@ -7,6 +7,21 @@ source "$ROOT_DIR/lib/common.sh"
 
 step "Installing neovim config (LazyVim)"
 
+# Ensure build tools for native plugins
+step "Ensuring build tools"
+if ! command -v gcc &> /dev/null || ! command -v make &> /dev/null; then
+    warn "gcc/make not found — installing build-essential"
+    if [[ "$PLATFORM" == "mac" ]]; then
+        ensure_cmd brew brew
+        brew install gcc make
+    else
+        sudo apt-get update -qq && sudo apt-get install -y -qq build-essential
+    fi
+    ok "build tools installed"
+else
+    ok "gcc and make present"
+fi
+
 # Ensure nvim is installed
 if ! command -v nvim &>/dev/null; then
     warn "nvim not found — installing"

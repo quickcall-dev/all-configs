@@ -34,6 +34,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+step "Ensuring uv"
+if command -v uv &> /dev/null; then
+    ok "uv ${D}$(uv --version)${R}"
+else
+    warn "uv not found — installing"
+    curl -LsSf https://astral.sh/uv/install.sh | bash
+    export PATH="$HOME/.local/bin:$PATH"
+    ok "uv installed ${D}$(uv --version)${R}"
+fi
+
 step "Installing Hugging Face CLI"
 
 if command -v hf &> /dev/null; then
