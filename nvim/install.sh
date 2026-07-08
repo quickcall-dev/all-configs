@@ -54,7 +54,7 @@ ok "nvim config ${D}→ ~/.config/nvim/${R}"
 
 # Install plugins
 step "Installing nvim plugins"
-nvim --headless "+Lazy! sync" +qa 2>/dev/null && ok "plugins installed" || warn "open nvim manually — plugins will auto-install"
+nvim --headless "+Lazy! restore" +qa 2>/dev/null && ok "plugins installed" || warn "open nvim manually — plugins will auto-install"
 
 echo ""
 echo -e "  ${GRN}Done!${R} Run ${CYN}nvim${R} to start"
