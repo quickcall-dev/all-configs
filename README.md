@@ -26,8 +26,10 @@ cd all-configs
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
 | **karabiner** | Karabiner-Elements key remaps |
 | **node** | Node.js, npm, npx via system package manager |
+| **node** | Node.js, npm, npx via system package manager |
 | **nvim** | Neovim config with LazyVim, treesitter, fzf |
-| **skills** | QuickCall Claude Code skills |
+| **pi** | Pi coding agent CLI, settings, and package extensions |
+| **skills** | QuickCall skills + Pi system skills |
 | **ssh-keygen** | Generate SSH keys, update `~/.ssh/config`, test GitHub auth |
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
@@ -45,6 +47,30 @@ Each module can be installed directly:
 ./zoxide/install.sh
 ./fonts/install.sh
 ```
+
+### pi
+
+Install the Pi coding agent, copy settings, and install package extensions:
+
+```bash
+./pi/install.sh
+```
+
+Configured packages (in `pi/settings.json`):
+- `npm:@tintinweb/pi-subagents`
+- `npm:pi-web-access`
+- `npm:pi-caveman`
+- `https://github.com/obra/superpowers`
+
+### skills
+
+Install QuickCall skills and Pi system skills (everything under `skills/`):
+
+```bash
+./skills/install.sh
+```
+
+To add a Pi system skill, drop it into the `skills/` folder and re-run the installer.
 
 ### github
 

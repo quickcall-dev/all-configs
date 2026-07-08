@@ -1,0 +1,23 @@
+{
+  "defaultProvider": "kimi-coding",
+  "defaultModel": "kimi-for-coding",
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": true,
+  "packages": [
+    "npm:@tintinweb/pi-subagents",
+    "npm:pi-web-access",
+    "npm:pi-caveman",
+    "https://github.com/obra/superpowers"
+  ],
+  "treeFilterMode": "all",
+  "theme": "light",
+  "images": {
+    "blockImages": false
+  },
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "steeringMode": "one-at-a-time",
+  "transport": "auto",
+  "doubleEscapeAction": "tree"
+}
