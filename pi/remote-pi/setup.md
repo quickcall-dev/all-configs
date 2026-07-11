@@ -13,7 +13,7 @@ Flow:
 
 ```mermaid
 graph TD
-    phone[📱 Phone / other machine] -- Tailscale HTTPS --> serve[tailscale serve :9090]
+    phone[📱 Phone / other machine] -- Tailscale HTTP (encrypted tailnet) --> serve[tailscale serve :9090]
     serve --> relay[🐳 Docker remote-pi-relay :3000]
     pi[Pi + remote-pi extension] -- Tailscale/WebSocket --> relay
     relay --> app[Remote Pi mobile app]
@@ -26,10 +26,10 @@ graph TD
 
 - Hostname: `HOSTNAME`
 - Tailnet DNS: `HOSTNAME.tailxxxxx.ts.net`
-- Relay URL: `https://HOSTNAME.tailxxxxx.ts.net:9090`
+- Relay URL: `http://HOSTNAME.tailxxxxx.ts.net:9090`
 - Tailscale IP: `100.x.x.x`
 - Local relay health: `http://localhost:9090/health`
-- Tailnet relay health: `https://HOSTNAME.tailxxxxx.ts.net:9090/health`
+- Tailnet relay health: `http://HOSTNAME.tailxxxxx.ts.net:9090/health`
 
 ## Prerequisites
 
@@ -80,7 +80,7 @@ tailscale status
 ```bash
 docker run -d \
   --name remote-pi-relay \
-  -p 9090:3000 \
+  -p 127.0.0.1:9090:3000 \
   -v remote-pi-data:/data \
   --restart unless-stopped \
   jacobmoura7/remote-pi-relay
@@ -109,20 +109,20 @@ Enable HTTPS serving in Tailscale admin once per tailnet if needed:
 https://login.tailscale.com/f/serve
 ```
 
-Expose local relay with Tailscale auto-TLS:
+Expose local relay over Tailscale HTTP (tailnet traffic remains encrypted by Tailscale):
 
 ```bash
-sudo tailscale serve --bg --https=9090 http://localhost:9090
+sudo tailscale serve --bg --http=9090 http://localhost:9090
 ```
 
 Verify:
 
 ```bash
 tailscale serve status
-# https://hostname.tailxxxxx.ts.net:9090 (tailnet only)
+# http://hostname.tailxxxxx.ts.net:9090 (tailnet only)
 ```
 
-`(tailnet only)` means only devices logged into same Tailscale network can reach it.
+`(tailnet only)` means only devices logged into same Tailscale network can reach it. Use `http://` here; Docker is bound to localhost and Tailscale Serve is the only tailnet-facing listener.
 
 ## Step 4: Install and configure Remote Pi extension
 
@@ -138,7 +138,7 @@ Set global relay URL:
 mkdir -p ~/.pi/remote
 python3 - <<'PY'
 import json, pathlib
-relay = "https://HOSTNAME.tailxxxxx.ts.net:9090"
+relay = "http://HOSTNAME.tailxxxxx.ts.net:9090"
 p = pathlib.Path.home() / ".pi/remote/config.json"
 data = json.loads(p.read_text()) if p.exists() else {}
 data["relay"] = relay
@@ -149,9 +149,9 @@ PY
 Or inside Pi:
 
 ```text
-/remote-pi set-relay https://HOSTNAME.tailxxxxx.ts.net:9090
+/remote-pi set-relay http://HOSTNAME.tailxxxxx.ts.net:9090
 # Newer command alias:
-/remote-pi relay url https://HOSTNAME.tailxxxxx.ts.net:9090
+/remote-pi relay url http://HOSTNAME.tailxxxxx.ts.net:9090
 ```
 
 Set per-project local config if you want `/remote-pi` to skip wizard:
@@ -177,7 +177,7 @@ Expected:
 
 ```text
 Local mesh: connected as "all-configs"
-Relay: connected (https://HOSTNAME.tailxxxxx.ts.net:9090)
+Relay: connected (http://HOSTNAME.tailxxxxx.ts.net:9090)
 ```
 
 ## Step 5: Pair mobile app
@@ -185,9 +185,9 @@ Relay: connected (https://HOSTNAME.tailxxxxx.ts.net:9090)
 On phone:
 
 1. Install Tailscale, sign in to same tailnet.
-2. Verify relay in browser: `https://HOSTNAME.tailxxxxx.ts.net:9090/health` → `OK`.
+2. Verify relay in browser: `http://HOSTNAME.tailxxxxx.ts.net:9090/health` → `OK`.
 3. Install Remote Pi app.
-4. In app settings, set relay URL to `https://HOSTNAME.tailxxxxx.ts.net:9090`.
+4. In app settings, set relay URL to `http://HOSTNAME.tailxxxxx.ts.net:9090`.
 
 In Pi TUI on VM:
 
@@ -205,7 +205,7 @@ curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up --ssh=false
 
 tailscale status
-curl https://HOSTNAME.tailxxxxx.ts.net:9090/health
+curl http://HOSTNAME.tailxxxxx.ts.net:9090/health
 
 # 2. Install Pi extension
 pi install npm:remote-pi
@@ -214,7 +214,7 @@ pi install npm:remote-pi
 mkdir -p ~/.pi/remote
 python3 - <<'PY'
 import json, pathlib
-relay = "https://HOSTNAME.tailxxxxx.ts.net:9090"
+relay = "http://HOSTNAME.tailxxxxx.ts.net:9090"
 p = pathlib.Path.home() / ".pi/remote/config.json"
 data = json.loads(p.read_text()) if p.exists() else {}
 data["relay"] = relay
@@ -243,7 +243,7 @@ Then open Pi and run:
 ### Phone or other machine cannot reach relay
 
 - Device must be logged into same Tailscale tailnet.
-- Test from that device: `https://HOSTNAME.tailxxxxx.ts.net:9090/health` should return `OK`.
+- Test from that device: `http://HOSTNAME.tailxxxxx.ts.net:9090/health` should return `OK`.
 - On VM, check:
 
 ```bash
@@ -271,7 +271,7 @@ Normal until first mobile device pairs. Green after paired/connected.
 ### Stop services
 
 ```bash
-sudo tailscale serve --https=9090 off
+sudo tailscale serve --http=9090 off
 docker stop remote-pi-relay
 ```
 
