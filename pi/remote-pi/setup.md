@@ -1,49 +1,81 @@
 # Remote Pi with Tailscale Relay Setup
 
-Self-hosted Remote Pi relay behind Tailscale VPN for private agent mesh + mobile control.
+Self-hosted Remote Pi relay behind Tailscale VPN for private mobile control + local agent mesh.
 
-## Architecture
+## What each piece does
+
+- **Tailscale**: private network between your devices. Only tailnet devices can reach relay URL.
+- **Remote Pi relay**: WebSocket rendezvous/message broker for Remote Pi mobile app ↔ Pi extension.
+- **Docker relay container**: self-hosted relay process.
+- **Remote Pi Pi extension**: adds `/remote-pi`, local agent mesh, mobile pairing, relay client.
+
+Flow:
 
 ```mermaid
 graph TD
-    phone[📱 Phone] -- Tailscale --> tailscale[🔐 Tailscale VPN]
-    mac[🖥️ Mac Pi agents] -- Tailscale --> tailscale
-    tailscale --> serve[tailscale serve HTTPS:9090]
-    serve --> relay[🐳 Docker relay :3000]
-    relay --> broker[Local mesh broker]
-    broker --> agent1[ai-agent-security]
-    broker --> agent2[agent-2]
+    phone[📱 Phone / other machine] -- Tailscale HTTPS --> serve[tailscale serve :9090]
+    serve --> relay[🐳 Docker remote-pi-relay :3000]
+    pi[Pi + remote-pi extension] -- Tailscale/WebSocket --> relay
+    relay --> app[Remote Pi mobile app]
+    pi --> broker[Local mesh broker]
+    broker --> agent1[Pi agent]
+    broker --> agent2[Pi agent]
 ```
+
+## Current VM values
+
+- Hostname: `HOSTNAME`
+- Tailnet DNS: `HOSTNAME.tailxxxxx.ts.net`
+- Relay URL: `https://HOSTNAME.tailxxxxx.ts.net:9090`
+- Tailscale IP: `100.x.x.x`
+- Local relay health: `http://localhost:9090/health`
+- Tailnet relay health: `https://HOSTNAME.tailxxxxx.ts.net:9090/health`
 
 ## Prerequisites
 
 - Docker
 - Tailscale account + app on all devices
 - Pi coding agent installed
-- Remote Pi Pi extension (`pi install npm:remote-pi`)
+- Remote Pi extension: `pi install npm:remote-pi`
 
 ## Step 1: Install Tailscale
 
+### Linux (Ubuntu/Debian)
+
 ```bash
-brew install tailscale
-# Or install macOS GUI: brew install --cask tailscale-app
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up --ssh=false
 ```
 
-Open Tailscale app, sign in. Verify:
+Authenticate in browser when prompted. Verify:
 
 ```bash
 tailscale status
-# Should show: 100.x.x.x  hostname  your@account  macOS  -
+# Should show: 100.x.x.x  hostname  account  linux  -
 ```
 
-Note your MagicDNS name:
+Get MagicDNS name:
 
 ```bash
 tailscale status --json | python3 -c "import json,sys; print(json.load(sys.stdin)['Self']['DNSName'])"
 # Example: hostname.tailxxxxx.ts.net
 ```
 
-## Step 2: Run Docker Relay
+### macOS
+
+```bash
+brew install tailscale
+# Or GUI app:
+brew install --cask tailscale-app
+```
+
+Open Tailscale app, sign in, verify:
+
+```bash
+tailscale status
+```
+
+## Step 2: Run Docker relay on host VM
 
 ```bash
 docker run -d \
@@ -54,118 +86,198 @@ docker run -d \
   jacobmoura7/remote-pi-relay
 ```
 
+If container already exists:
+
+```bash
+docker start remote-pi-relay
+```
+
 Verify:
 
 ```bash
 curl http://localhost:9090/health
-# Should return: OK
+# OK
+
+docker ps --filter name=remote-pi-relay
 ```
 
-## Step 3: Enable Tailscale Serve
+## Step 3: Expose relay only inside Tailscale
 
-Enable HTTPS serving in Tailscale admin console (one-time per tailnet):
+Enable HTTPS serving in Tailscale admin once per tailnet if needed:
 
-Open: `https://login.tailscale.com/f/serve` and enable.
+```text
+https://login.tailscale.com/f/serve
+```
 
-Then expose relay over Tailscale with auto-TLS:
+Expose local relay with Tailscale auto-TLS:
 
 ```bash
-tailscale serve --bg --https=9090 http://localhost:9090
+sudo tailscale serve --bg --https=9090 http://localhost:9090
 ```
 
 Verify:
 
 ```bash
 tailscale serve status
-# Should show: https://hostname.tailxxxxx.ts.net:9090 (tailnet only)
+# https://hostname.tailxxxxx.ts.net:9090 (tailnet only)
 ```
 
-`(tailnet only)` means only reachable from within your Tailscale network — correct.
+`(tailnet only)` means only devices logged into same Tailscale network can reach it.
 
-## Step 4: Configure Remote Pi
+## Step 4: Install and configure Remote Pi extension
 
-In any Pi session:
+Install package:
 
+```bash
+pi install npm:remote-pi
 ```
-/remote-pi setup
+
+Set global relay URL:
+
+```bash
+mkdir -p ~/.pi/remote
+python3 - <<'PY'
+import json, pathlib
+relay = "https://HOSTNAME.tailxxxxx.ts.net:9090"
+p = pathlib.Path.home() / ".pi/remote/config.json"
+data = json.loads(p.read_text()) if p.exists() else {}
+data["relay"] = relay
+p.write_text(json.dumps(data, indent=2) + "\n")
+PY
 ```
 
-Set agent name, enable relay. Then point at your self-hosted relay:
+Or inside Pi:
 
-```
+```text
 /remote-pi set-relay https://HOSTNAME.tailxxxxx.ts.net:9090
-/remote-pi stop
+# Newer command alias:
+/remote-pi relay url https://HOSTNAME.tailxxxxx.ts.net:9090
+```
+
+Set per-project local config if you want `/remote-pi` to skip wizard:
+
+```bash
+mkdir -p .pi/remote-pi
+cat > .pi/remote-pi/config.json <<'JSON'
+{
+  "agent_name": "all-configs",
+  "auto_start_relay": true
+}
+JSON
+```
+
+Start in Pi TUI:
+
+```text
 /remote-pi
-```
-
-Verify:
-
-```
 /remote-pi status
-# Should show:
-# 🟢 Local mesh: connected as "agent-name" (N peers)
-# 🟢 Relay: on, connected (https://HOSTNAME.tailxxxxx.ts.net:9090)
 ```
 
-## Step 5: Pair Mobile App
+Expected:
 
-### On Phone
-
-1. Install Tailscale from App Store, sign in to same tailnet
-2. Install Remote Pi app
-3. In app settings, set relay to `https://HOSTNAME.tailxxxxx.ts.net:9090`
-4. Verify relay connection (app shows green indicator)
-
-### On Mac
-
+```text
+Local mesh: connected as "all-configs"
+Relay: connected (https://HOSTNAME.tailxxxxx.ts.net:9090)
 ```
+
+## Step 5: Pair mobile app
+
+On phone:
+
+1. Install Tailscale, sign in to same tailnet.
+2. Verify relay in browser: `https://HOSTNAME.tailxxxxx.ts.net:9090/health` → `OK`.
+3. Install Remote Pi app.
+4. In app settings, set relay URL to `https://HOSTNAME.tailxxxxx.ts.net:9090`.
+
+In Pi TUI on VM:
+
+```text
 /remote-pi pair
 ```
 
-Scan QR code with Remote Pi app's built-in scanner (NOT camera app).
+Scan QR with Remote Pi app built-in scanner, not system camera.
 
-## Verification
+## Setup on another Linux machine
 
-```mermaid
-sequenceDiagram
-    participant Phone
-    participant Tailscale
-    participant Relay
-    participant Pi
+```bash
+# 1. Install Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up --ssh=false
 
-    Phone->>Tailscale: Connect
-    Tailscale->>Relay: HTTPS :9090
-    Relay->>Pi: Pairing handshake
-    Pi-->>Relay: ACK
-    Relay-->>Phone: Connected
-    Phone->>Pi: Send prompt
-    Pi-->>Phone: Agent response
+tailscale status
+curl https://HOSTNAME.tailxxxxx.ts.net:9090/health
+
+# 2. Install Pi extension
+pi install npm:remote-pi
+
+# 3. Point Remote Pi at VM relay
+mkdir -p ~/.pi/remote
+python3 - <<'PY'
+import json, pathlib
+relay = "https://HOSTNAME.tailxxxxx.ts.net:9090"
+p = pathlib.Path.home() / ".pi/remote/config.json"
+data = json.loads(p.read_text()) if p.exists() else {}
+data["relay"] = relay
+p.write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+# 4. Optional project config
+mkdir -p .pi/remote-pi
+cat > .pi/remote-pi/config.json <<'JSON'
+{
+  "agent_name": "linux-agent",
+  "auto_start_relay": true
+}
+JSON
+```
+
+Then open Pi and run:
+
+```text
+/remote-pi
+/remote-pi status
 ```
 
 ## Troubleshooting
 
-### Phone cannot reach relay
+### Phone or other machine cannot reach relay
 
-- Phone must have Tailscale installed and connected to same tailnet
-- Test: open `https://HOSTNAME.tailxxxxx.ts.net:9090/health` in phone browser — should show `OK`
+- Device must be logged into same Tailscale tailnet.
+- Test from that device: `https://HOSTNAME.tailxxxxx.ts.net:9090/health` should return `OK`.
+- On VM, check:
+
+```bash
+tailscale status
+tailscale serve status
+docker ps --filter name=remote-pi-relay
+curl http://localhost:9090/health
+```
 
 ### App pairing fails
 
-- Must set custom relay URL in app settings BEFORE scanning QR
-- Relay URL must match on both Pi and phone
-- Use app's built-in QR scanner, not phone camera
+- Set same custom relay URL in mobile app before scanning QR.
+- Use Remote Pi app QR scanner, not phone camera.
+- Restart relay client in Pi:
 
-### Yellow relay status (waiting for pairing)
-
-Normal until first device pairs. Status turns green after pairing.
-
-### Cross-PC access
-
-On second machine, install Tailscale + Pi + Remote Pi extension. Run:
-
-```
-/remote-pi set-relay https://HOSTNAME.tailxxxxx.ts.net:9090
-/remote-pi
+```text
+/remote-pi relay stop
+/remote-pi relay start
 ```
 
-Agents discover each other via `list_peers`. Remote peers appear with PC label prefix.
+### Yellow relay status
+
+Normal until first mobile device pairs. Green after paired/connected.
+
+### Stop services
+
+```bash
+sudo tailscale serve --https=9090 off
+docker stop remote-pi-relay
+```
+
+### Remove services
+
+```bash
+docker rm -f remote-pi-relay
+sudo apt-get remove tailscale
+```
