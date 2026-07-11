@@ -139,6 +139,22 @@ Install plugin if missing:
 pi install npm:remote-pi
 ```
 
+If npm package is stale (crashes on session replacement), install from source:
+
+```bash
+git clone https://github.com/jacobaraujo7/remote_pi.git ~/remote_pi
+cd ~/remote_pi/pi-extension
+npm install && npx tsc
+pi install ~/remote_pi/pi-extension
+```
+
+To update source build later:
+
+```bash
+cd ~/remote_pi && git pull && cd pi-extension && npm install && npx tsc
+# dist rebuilds automatically — no re-install needed unless pi re-resolves packages
+```
+
 Set same relay URL on Mac and VM:
 
 ```text
