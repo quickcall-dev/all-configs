@@ -21,6 +21,7 @@ cd all-configs
 |--------|-------------|
 | **caveman** | caveman Claude Code plugin — terse output mode |
 | **claude** | Claude Code CLI via claude.ai/install.sh |
+| **cursor** | Cursor user settings and keybindings |
 | **fonts** | Meslo Nerd Font for terminal/editor icons |
 | **ghostty** | Ghostty terminal config + themes |
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
@@ -34,7 +35,8 @@ cd all-configs
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
 | **uv** | Astral uv — fast Python package and project manager |
-| **hf** | Hugging Face CLI (hf) via hf.co/install.sh |
+| **vscode** | VS Code user settings, keybindings, and tasks |
+| **zed** | Zed editor settings with Nerd Font terminal icons |
 | **zoxide** | Smarter `cd` command with learning and fzf integration |
 
 ## Standalone usage

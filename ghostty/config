@@ -14,7 +14,7 @@ theme = vscode-light.conf
 # FONT
 # --------------------------------------------
 
-font-family = MesloLGS NF
+font-family = MesloLGS Nerd Font Mono
 font-size = 14
 
 # --------------------------------------------
