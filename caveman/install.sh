@@ -31,7 +31,33 @@ else
     warn "caveman plugin install failed; open Claude Code and run plugin install manually"
 fi
 
+step "Setting caveman ultra defaults"
+
+CAVEMAN_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/caveman"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+PI_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+
+mkdir -p "$CAVEMAN_CONFIG_DIR" "$CLAUDE_DIR" "$PI_AGENT_DIR"
+
+cat > "$CAVEMAN_CONFIG_DIR/config.json" <<'JSON'
+{
+  "defaultMode": "ultra"
+}
+JSON
+ok "Claude caveman default ${D}→ ultra${R}"
+
+printf 'ultra\n' > "$CLAUDE_DIR/.caveman-active"
+ok "Claude caveman active flag ${D}→ ultra${R}"
+
+cat > "$PI_AGENT_DIR/caveman.json" <<'JSON'
+{
+  "defaultLevel": "ultra",
+  "showStatus": true
+}
+JSON
+ok "Pi caveman default ${D}→ ultra${R}"
+
 echo ""
-echo -e "  ${GRN}Done!${R} Use ${CYN}/caveman${R} in Claude Code to activate"
-echo -e "  ${D}Levels: /caveman lite | full | ultra  |  Stop: 'normal mode'${R}"
+echo -e "  ${GRN}Done!${R} Caveman defaults to ${CYN}ultra${R} in Claude and Pi"
+echo -e "  ${D}Stop: /caveman off or 'normal mode'${R}"
 echo ""
