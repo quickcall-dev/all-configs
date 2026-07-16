@@ -1,0 +1,3 @@
+name = "zed"
+description = "Installs Zed via Homebrew and copies settings"
+platforms = ["mac"]

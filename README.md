@@ -19,14 +19,13 @@ cd all-configs
 
 | Module | What it does |
 |--------|-------------|
+| **browsers** | Brave and Google Chrome via Homebrew |
 | **caveman** | caveman Claude Code plugin — terse output mode |
 | **claude** | Claude Code CLI via claude.ai/install.sh |
-| **cursor** | Cursor user settings and keybindings |
 | **fonts** | Meslo Nerd Font for terminal/editor icons |
 | **ghostty** | Ghostty terminal config + themes |
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
 | **karabiner** | Karabiner-Elements key remaps |
-| **node** | Node.js, npm, npx via system package manager |
 | **node** | Node.js, npm, npx via system package manager |
 | **nvim** | Neovim config with LazyVim, treesitter, fzf |
 | **pi** | Pi coding agent CLI, settings, and package extensions |

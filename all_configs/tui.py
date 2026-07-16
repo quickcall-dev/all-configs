@@ -18,12 +18,24 @@ class InstallerApp(App[None]):
 
     CSS = """
     Screen { align: center middle; }
-    #main { width: 100%; height: 100%; padding: 1 2; }
-    #title { text-align: center; text-style: bold; margin-bottom: 1; }
-    #modules { height: 50%; border: solid $primary; }
+    #main { width: 100%; height: 100%; padding: 2 4; }
+    #title {
+        text-align: center;
+        text-style: bold;
+        color: $text-accent;
+        margin-bottom: 1;
+    }
+    #split { height: 55%; border: solid $primary; }
+    #modules { width: 60%; border: solid $primary; }
+    #preview {
+        width: 40%;
+        border: solid $surface-lighten-1;
+        padding: 1 2;
+        color: $text-muted;
+    }
+    #install { margin-top: 1; width: 100%; }
     #log { height: 35%; border: solid $surface-lighten-1; margin-top: 1; }
     #status { height: auto; margin-top: 1; text-style: bold; }
-    Button { margin-top: 1; width: 100%; }
     """
 
     BINDINGS = [
@@ -50,7 +62,12 @@ class InstallerApp(App[None]):
                 Selection(f"{m['name']}  —  {m['description']}", m["name"], True)
                 for m in self.modules
             ]
-            yield SelectionList(*selections, id="modules")
+            with Horizontal(id="split"):
+                yield SelectionList(*selections, id="modules")
+                yield Static(
+                    "Select a module to see details.",
+                    id="preview",
+                )
             yield Button("Install selected", id="install", variant="primary")
             yield Log(id="log")
             yield Label("Ready", id="status")
@@ -58,9 +75,30 @@ class InstallerApp(App[None]):
 
     def on_mount(self) -> None:
         self.log_widget = self.query_one("#log", Log)
-        self.query_one("#modules", SelectionList).border_title = "Modules (Space to toggle)"
+        module_list = self.query_one("#modules", SelectionList)
+        module_list.border_title = "Modules (Space to toggle)"
+        preview = self.query_one("#preview", Static)
+        preview.border_title = "Preview"
+        if self.modules:
+            module_list.highlighted = 0
+            self._update_preview(self.modules[0]["name"])
         if self._init_error:
             self.set_status(f"Error loading modules: {self._init_error}")
+
+    def _update_preview(self, name: str) -> None:
+        for module in self.modules:
+            if module["name"] == name:
+                lines = [
+                    f"[b]Name:[/b] {module['name']}",
+                    f"[b]Description:[/b] {module['description']}",
+                    f"[b]Platforms:[/b] {', '.join(module['platforms'])}",
+                    f"[b]Path:[/b] {module['path']}",
+                ]
+                self.query_one("#preview", Static).update("\n".join(lines))
+                return
+
+    def on_selection_list_selected_changed(self, event: SelectionList.SelectedChanged) -> None:
+        self._update_preview(event.item_id)
 
     def action_select_all(self) -> None:
         module_list = self.query_one("#modules", SelectionList)

@@ -1,0 +1,74 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "ctrl+.",
+    "command": "workbench.action.quickOpenTerm",
+    "when": "terminalHasBeenCreated || terminalProcessSupported"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-chat.action.focus",
+    "when": "inChatInput && isLinux && !quickChatHasFocus || inChatInput && isWindows && !quickChatHasFocus"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-widgetNavigation.focusPrevious",
+    "when": "inputFocus && navigableContainerFocused || navigableContainerFocused && treestickyScrollFocused || navigableContainerFocused && !listFocus || navigableContainerFocused && listScrollAtBoundary == 'both' || navigableContainerFocused && listScrollAtBoundary == 'top'"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-workbench.action.chat.focusInput",
+    "when": "inChat && quickChatHasFocus && !inChatInput"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-workbench.action.terminal.focusAccessibleBuffer",
+    "when": "accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-selectPrevSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-interactive.history.focus",
+    "when": "isCompositeNotebook && isLinux && !notebookEditorFocused || isCompositeNotebook && isWindows && !notebookEditorFocused"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-notebook.focusTop",
+    "when": "notebookEditorFocused && !inputFocus && notebookChatOuterFocusPosition == ''"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-list.collapse",
+    "when": "listFocus && treeElementCanCollapse && !inputFocus && !treestickyScrollFocused || listFocus && treeElementHasParent && !inputFocus && !treestickyScrollFocused"
+  },
+  {
+    "key": "cmd+up",
+    "command": "-interactive.scrollToTop",
+    "when": "activeEditor == 'workbench.editor.interactive'"
+  },
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\u001b\r"
+    },
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+t",
+    "command": "workbench.action.toggleMaximizedPanel"
+  },
+  {
+    "key": "ctrl+t",
+    "command": "-editor.action.transposeLetters",
+    "when": "textInputFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+shift+i",
+    "command": "-workbench.action.chat.open"
+  }
+]

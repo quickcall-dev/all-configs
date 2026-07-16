@@ -1,0 +1,426 @@
+{
+  "terminal.integrated.gpuAcceleration": "off",
+  "terminal.integrated.profiles.osx": {
+    "tmux": {
+      "path": "tmux",
+      "args": [
+        "new-session",
+        "-A",
+        "-s",
+        "main"
+      ],
+      "icon": "terminal-tmux"
+    }
+  },
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "workbench.startupEditor": "newUntitledFile",
+  "jupyter.alwaysTrustNotebooks": true,
+  "editor.formatOnSave": true,
+  "editor.fontSize": 14,
+  "jupyter.askForKernelRestart": false,
+  "extensions.ignoreRecommendations": true,
+  "editor.largeFileOptimizations": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "remote.SSH.connectTimeout": 40,
+  "remote.SSH.enableDynamicForwarding": false,
+  "remote.SSH.useExecServer": false,
+  "remote.SSH.useLocalServer": false,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.enablePreviewFromQuickOpen": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "python.showStartPage": false,
+  "python.pythonPath": "/Users/sagarsarkale/opt/anaconda3/bin/python",
+  "editor.lineNumbers": "relative",
+  "zenMode.hideLineNumbers": false,
+  "zenMode.hideStatusBar": false,
+  "zenMode.silentNotifications": false,
+  "zenMode.centerLayout": false,
+  "zenMode.hideActivityBar": false,
+  "codestream.email": "sagxam@gmail.com",
+  "pasteAndIndent.selectAfter": true,
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "window.restoreFullscreen": true,
+  "settingsSync.ignoredSettings": [
+    "python.defaultInterpreterPath",
+    "-python.formatting.blackPath"
+  ],
+  "files.associations": {
+    ".env": "shellscript",
+    "*.json": "json",
+    "config": "plaintext"
+  },
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "java.home": "/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home",
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "settingsSync.ignoredExtensions": [
+    "tushortz.java-snippets",
+    "vscjava.vscode-java-pack"
+  ],
+  "python.formatting.provider": "black",
+  "editor.fontFamily": "Menlo, Monaco, 'Courier New', 'monospace', 'Fira Code'",
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.wordWrap": "on",
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnType": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "code-runner.clearPreviousOutput": true,
+  "git.autofetch": true,
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "githubPullRequests.pullBranch": "never",
+  "yaml.schemas": {
+    "file:///Users/sagar/.vscode/extensions/atlassian.atlascode-2.10.12/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "redhat.telemetry.enabled": true,
+  "terminal.integrated.inheritEnv": false,
+  "editor.minimap.enabled": false,
+  "files.trimTrailingWhitespace": true,
+  "gitlens.gitCommands.skipConfirmations": [
+    "fetch:command",
+    "stash-push:command",
+    "switch:command",
+    "push:command"
+  ],
+  "terminal.external.osxExec": "Iterm.app",
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "git.statusLimit": 1000,
+  "editor.rename.enablePreview": false,
+  "codestream.serverUrl": "https://codestream-us1.service.newrelic.com",
+  "workbench.editor.empty.hint": "hidden",
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "http.proxySupport": "on",
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "remote.SSH.remotePlatform": {
+    "ec2-medpiper": "linux",
+    "vast-ai-machine": "linux",
+    "dev-test-stage-instance": "linux",
+    "runpod-machine": "linux",
+    "vast-ai-machine-A10": "linux",
+    "vast-ai-machine-A10-P": "linux",
+    "vast-ai-machine-A100": "linux",
+    "vast-ai-machine-H100": "linux",
+    "quickcall-vm": "linux"
+  },
+  "editor.defaultFormatter": "charliermarsh.ruff",
+  "notebook.lineNumbers": "on",
+  "gitlens.mode.active": "zen",
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "explorer.autoReveal": false,
+  "python.REPL.enableREPLSmartSend": false,
+  "interactiveWindow.executeWithShiftEnter": true,
+  "notebook.output.scrolling": true,
+  "notebook.output.textLineLimit": 100,
+  "notebook.output.wordWrap": true,
+  "jupyter.interactiveWindow.creationMode": "perFile",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "markdown-preview-enhanced.scrollSync": false,
+  "gitlens.views.commitDetails.files.layout": "list",
+  "editor.stickyScroll.enabled": false,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "peacock.favoriteColors": [
+    {
+      "name": "Angular Red",
+      "value": "#dd0531"
+    },
+    {
+      "name": "Azure Blue",
+      "value": "#007fff"
+    },
+    {
+      "name": "JavaScript Yellow",
+      "value": "#f9e64f"
+    },
+    {
+      "name": "Mandalorian Blue",
+      "value": "#1857a4"
+    },
+    {
+      "name": "Node Green",
+      "value": "#215732"
+    },
+    {
+      "name": "React Blue",
+      "value": "#61dafb"
+    },
+    {
+      "name": "Something Different",
+      "value": "#832561"
+    },
+    {
+      "name": "Svelte Orange",
+      "value": "#ff3d00"
+    },
+    {
+      "name": "Vue Green",
+      "value": "#42b883"
+    }
+  ],
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "python.envFile": "${workspaceFolder}/dev.env",
+  "editor.accessibilitySupport": "on",
+  "accessibility.signals.lineHasBreakpoint": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.chatRequestSent": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.chatResponseReceived": {
+    "sound": "off"
+  },
+  "accessibility.signals.clear": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.onDebugBreak": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.diffLineDeleted": {
+    "sound": "off"
+  },
+  "accessibility.signals.diffLineInserted": {
+    "sound": "off"
+  },
+  "accessibility.signals.diffLineModified": {
+    "sound": "off"
+  },
+  "accessibility.signals.positionHasError": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.lineHasError": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.lineHasFoldedArea": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.lineHasInlineSuggestion": {
+    "sound": "off"
+  },
+  "accessibility.signals.noInlayHints": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.notebookCellCompleted": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.notebookCellFailed": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.progress": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.taskCompleted": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.taskFailed": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.terminalBell": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.terminalCommandFailed": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.terminalCommandSucceeded": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.terminalQuickFix": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.voiceRecordingStarted": {
+    "sound": "off"
+  },
+  "accessibility.signals.voiceRecordingStopped": {
+    "sound": "off"
+  },
+  "accessibility.signals.positionHasWarning": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "accessibility.signals.lineHasWarning": {
+    "sound": "off",
+    "announcement": "auto"
+  },
+  "editor.foldingStrategy": "indentation",
+  "window.confirmBeforeClose": "always",
+  "cursor.cpp.disabledLanguages": [],
+  "sync.gist": "0bcdb4361b99587e9e7593a03b2ba80a",
+  "sync.autoDownload": true,
+  "[dockerfile]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "m-ahmadkhan.bq-formatter-vscode"
+  },
+  "database-client.autoSync": true,
+  "[cuda-cpp]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "notebook.defaultFormatter": "charliermarsh.ruff",
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.extraPaths": [
+    "./"
+  ],
+  "python.analysis.include": [
+    "**/*.py"
+  ],
+  "python.analysis.packageIndexDepths": [
+    {
+      "name": "sklearn",
+      "depth": 2
+    },
+    {
+      "name": "matplotlib",
+      "depth": 2
+    },
+    {
+      "name": "scipy",
+      "depth": 2
+    },
+    {
+      "name": "django",
+      "depth": 2
+    },
+    {
+      "name": "flask",
+      "depth": 2
+    },
+    {
+      "name": "fastapi",
+      "depth": 2
+    },
+    {
+      "name": "",
+      "depth": 2
+    }
+  ],
+  "python.autoComplete.extraPaths": [
+    "./notebooks",
+    "./src",
+    "./"
+  ],
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.diagnosticSeverityOverrides": {},
+  "python.analysis.userFileIndexingLimit": 2000,
+  "python.analysis.exclude": [
+    "**/Interactive-*.interactive.py",
+    "**/.vscode",
+    "**/site-packages",
+    "**/node_modules",
+    "**/__pycache__",
+    ".git"
+  ],
+  "python.analysis.ignore": [
+    "**/Interactive-*.interactive.py"
+  ],
+  "jupyter.interactiveWindow.textEditor.executeSelection": false,
+  "jupyter.interactiveWindow.textEditor.magicCommandsAsComments": true,
+  "cursorpyright.analysis.diagnosticSeverityOverrides": {},
+  "cursorpyright.analysis.exclude": [
+    "**/Interactive-*.interactive.py",
+    "**/.vscode",
+    "**/site-packages",
+    "**/node_modules",
+    "**/__pycache__",
+    ".git"
+  ],
+  "cursorpyright.analysis.extraPaths": [
+    "./"
+  ],
+  "cursorpyright.analysis.ignore": [
+    "**/Interactive-*.interactive.py"
+  ],
+  "cursorpyright.analysis.include": [
+    "**/*.py"
+  ],
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+  "trailing-spaces.backgroundColor": "rgba(0,0,0,0)",
+  "remote.autoForwardPortsSource": "hybrid",
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "claudeCode.selectedModel": "haiku",
+  "search.showLineNumbers": true,
+  "claudeCode.preferredLocation": "panel",
+  "vim.useSystemClipboard": true,
+  "workbench.secondarySideBar.showLabels": false,
+  "claudeCode.useTerminal": true,
+  "chat.agent.enabled": false,
+  "chat.checkpoints.enabled": false,
+  "chat.customAgentInSubagent.enabled": false,
+  "github.copilot.chat.editor.enabled": false,
+  "chat.commandCenter.enabled": false,
+  "chat.editor.enabled": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "search.globalFindClipboard": true,
+  "editor.find.globalFindClipboard": true,
+  "terminal.integrated.initialHint": false,
+  "markdown.extension.preview.autoShowPreviewToSide": false,
+  "workbench.colorTheme": "Visual Studio Light",
+  "terminal.integrated.fontSize": 14,
+}
