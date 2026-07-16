@@ -14,7 +14,7 @@ if [[ "$PLATFORM" == "mac" ]]; then
         ok "ghostty ${D}$(command -v ghostty)${R}"
     else
         warn "ghostty not found — installing via brew cask"
-        brew install --cask ghostty
+        brew_install_cask ghostty
         ok "ghostty installed"
     fi
 else

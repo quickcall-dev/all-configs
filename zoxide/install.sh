@@ -13,7 +13,7 @@ if command -v zoxide &> /dev/null; then
 fi
 
 if command -v brew &> /dev/null; then
-    brew install zoxide
+    brew_install_formula zoxide
 elif command -v apt-get &> /dev/null; then
     sudo apt-get update -qq && sudo apt-get install -y -qq zoxide
 elif command -v dnf &> /dev/null; then

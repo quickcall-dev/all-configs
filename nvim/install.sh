@@ -12,8 +12,8 @@ step "Ensuring build tools"
 if ! command -v gcc &> /dev/null || ! command -v make &> /dev/null; then
     warn "gcc/make not found — installing build-essential"
     if [[ "$PLATFORM" == "mac" ]]; then
-        ensure_cmd brew brew
-        brew install gcc make
+        brew_install_formula gcc
+        brew_install_formula make
     else
         sudo apt-get update -qq && sudo apt-get install -y -qq build-essential
     fi
@@ -26,7 +26,7 @@ fi
 if ! command -v nvim &>/dev/null; then
     warn "nvim not found — installing"
     if [[ "$PLATFORM" == "mac" ]]; then
-        pkg_install neovim
+        brew_install_formula neovim
     else
         if command -v snap &>/dev/null; then
             sudo snap install nvim --classic
@@ -46,9 +46,11 @@ fi
 
 # tree-sitter
 if ! command -v tree-sitter &>/dev/null; then
-    if command -v npm &>/dev/null; then
+    if [[ "$PLATFORM" == "mac" ]]; then
+        brew_install_formula tree-sitter
+    elif command -v npm &>/dev/null; then
         warn "tree-sitter-cli not found — installing"
-        sudo npm install -g tree-sitter-cli
+        npm install -g tree-sitter-cli
         ok "tree-sitter-cli installed"
     else
         warn "tree-sitter-cli not found (npm not available — skipping)"
@@ -69,7 +71,7 @@ ok "nvim config ${D}→ ~/.config/nvim/${R}"
 
 # Install plugins
 step "Installing nvim plugins"
-nvim --headless "+Lazy! restore" +qa 2>/dev/null && ok "plugins installed" || warn "open nvim manually — plugins will auto-install"
+yes | nvim --headless "+Lazy! restore" +qa && ok "plugins installed" || warn "open nvim manually — plugins will auto-install"
 
 echo ""
 echo -e "  ${GRN}Done!${R} Run ${CYN}nvim${R} to start"

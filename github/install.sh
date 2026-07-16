@@ -45,7 +45,7 @@ if ! command -v gh &>/dev/null; then
   warn "gh not found — installing"
   if [[ "$PLATFORM" == "mac" ]]; then
     ensure_cmd brew brew
-    brew install gh
+    brew_install_formula gh
   else
     if command -v apt-get &>/dev/null; then
       sudo apt-get update -qq

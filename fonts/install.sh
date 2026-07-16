@@ -15,7 +15,7 @@ if ! command -v fc-cache &> /dev/null; then
     warn "fontconfig not found — installing"
     if [[ "$PLATFORM" == "mac" ]]; then
         ensure_cmd brew brew
-        brew install fontconfig
+        brew_install_formula fontconfig
     else
         sudo apt-get update -qq && sudo apt-get install -y -qq fontconfig
     fi

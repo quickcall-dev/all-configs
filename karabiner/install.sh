@@ -16,7 +16,7 @@ if command -v karabiner_cli &>/dev/null || [[ -d "/Applications/Karabiner-Elemen
     ok "Karabiner-Elements already installed"
 else
     warn "Karabiner-Elements not found; installing via brew cask"
-    brew install --cask karabiner-elements
+    brew_install_cask karabiner-elements
     ok "Karabiner-Elements installed"
 fi
 

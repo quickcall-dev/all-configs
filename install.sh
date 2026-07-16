@@ -65,7 +65,7 @@ ensure_gum() {
 
     ensure_brew
     step "Installing Gum via Homebrew"
-    brew install gum
+    brew_install_formula gum
     ok "Gum installed"
 }
 
