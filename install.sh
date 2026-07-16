@@ -160,6 +160,8 @@ run_ui() {
 
     gum confirm "Install ${#selected_modules[@]} module(s)?" || exit 0
 
+    ensure_brew
+
     declare -a failed=()
     for mod_name in "${selected_modules[@]}"; do
         if ! gum spin --spinner dot --title "Installing $mod_name" -- bash "$ROOT_DIR/$mod_name/install.sh"; then
