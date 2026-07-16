@@ -23,23 +23,34 @@ fi
 
 # ─── Config ───
 
-DEST="$HOME/.config/ghostty/config"
-mkdir -p "$(dirname "$DEST")"
+CONFIG_TARGETS=(
+    "$HOME/.config/ghostty/config"
+    "$HOME/.config/ghostty/config.ghostty"
+    "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
+)
 
-backup_file "$DEST"
-[[ -L "$DEST" ]] && rm "$DEST"
-
-ln -sf "$SCRIPT_DIR/config" "$DEST"
-ok "ghostty config ${D}→ ~/.config/ghostty/config (symlinked)${R}"
+for DEST in "${CONFIG_TARGETS[@]}"; do
+    mkdir -p "$(dirname "$DEST")"
+    backup_file "$DEST"
+    [[ -L "$DEST" ]] && rm "$DEST"
+    ln -sf "$SCRIPT_DIR/config" "$DEST"
+    ok "ghostty config ${D}→ $DEST (symlinked)${R}"
+done
 
 # ─── Themes ───
 
-THEMES_DEST="$HOME/.config/ghostty/themes"
-mkdir -p "$THEMES_DEST"
-for theme in "$SCRIPT_DIR/themes/"*; do
-    [[ -f "$theme" ]] || continue
-    ln -sf "$theme" "$THEMES_DEST/$(basename "$theme")"
-    ok "theme ${D}$(basename "$theme") → ~/.config/ghostty/themes/${R}"
+THEME_TARGETS=(
+    "$HOME/.config/ghostty/themes"
+    "$HOME/Library/Application Support/com.mitchellh.ghostty/themes"
+)
+
+for THEMES_DEST in "${THEME_TARGETS[@]}"; do
+    mkdir -p "$THEMES_DEST"
+    for theme in "$SCRIPT_DIR/themes/"*; do
+        [[ -f "$theme" ]] || continue
+        ln -sf "$theme" "$THEMES_DEST/$(basename "$theme")"
+        ok "theme ${D}$(basename "$theme") → $THEMES_DEST/${R}"
+    done
 done
 
 echo ""
