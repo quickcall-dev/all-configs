@@ -21,7 +21,7 @@ pkg_install() {
     local pkg="$1"
     if [[ "$PLATFORM" == "mac" ]]; then
         command -v brew &>/dev/null || { fail "Homebrew not found: https://brew.sh"; return 1; }
-        yes | brew install "$pkg"
+        yes | NONINTERACTIVE=1 CI=1 brew install "$pkg"
     else
         if command -v apt-get &>/dev/null; then
             sudo apt-get update -qq && sudo apt-get install -y -qq "$pkg"
@@ -69,7 +69,7 @@ brew_install_cask() {
         return 0
     fi
     step "Installing $name"
-    yes | brew install --cask "$name"
+    yes | NONINTERACTIVE=1 CI=1 brew install --cask "$name"
     ok "$name installed"
 }
 
@@ -80,7 +80,7 @@ brew_install_formula() {
         return 0
     fi
     step "Installing $name"
-    yes | brew install "$name"
+    yes | NONINTERACTIVE=1 CI=1 brew install "$name"
     ok "$name installed"
 }
 
