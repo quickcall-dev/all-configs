@@ -8,7 +8,7 @@ source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" >&2;
 
 GROUP_ORDER=(Browsers Media Editors Terminals Shell Runtimes AI Comms DevTools Fonts System Utilities Extras)
 
-MODULE_ORDER=(browsers spotify vlc nvim vscode zed ghostty tmux zoxide p10k node uv claude codex pi caveman skills slack github hf ssh-keygen fonts karabiner aldente betterdisplay raycast bitwarden statusline)
+MODULE_ORDER=(browsers spotify vlc nvim vscode zed ghostty tmux zoxide p10k node uv claude codex pi caveman skills slack github docker hf ssh-keygen fonts karabiner aldente betterdisplay raycast bitwarden statusline)
 
 module_group() {
     case "$1" in
@@ -22,7 +22,7 @@ module_group() {
         node|uv) echo "Runtimes" ;;
         claude|pi|caveman|skills|codex) echo "AI" ;;
         slack) echo "Comms" ;;
-        github|hf|ssh-keygen) echo "DevTools" ;;
+        github|hf|ssh-keygen|docker) echo "DevTools" ;;
         fonts) echo "Fonts" ;;
         statusline) echo "Extras" ;;
         *) echo "Other" ;;

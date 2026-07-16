@@ -25,6 +25,7 @@ cd all-configs
 | **fonts** | Meslo Nerd Font for terminal/editor icons |
 | **ghostty** | Ghostty terminal config + themes |
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
+| **docker** | Installs Docker Desktop via Homebrew |
 | **karabiner** | Karabiner-Elements key remaps |
 | **node** | Node.js, npm, npx via system package manager |
 | **nvim** | Neovim config with LazyVim, treesitter, fzf |
