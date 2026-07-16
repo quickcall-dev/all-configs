@@ -31,7 +31,11 @@ if command -v pi &> /dev/null; then
   ok "pi ${D}$(pi --version 2>/dev/null | head -1)${R}"
 else
   warn "pi not found — installing"
-  curl -fsSL https://pi.dev/install.sh | sh
+  if ! command -v npm &>/dev/null; then
+    warn "npm not found — installing node first"
+    bash "$ROOT_DIR/node/install.sh"
+  fi
+  npm install -g --ignore-scripts @earendil-works/pi-coding-agent
   export PATH="$HOME/.local/bin:$PATH"
   ok "pi installed ${D}$(pi --version 2>/dev/null | head -1)${R}"
 fi

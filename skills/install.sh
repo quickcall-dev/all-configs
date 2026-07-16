@@ -14,7 +14,7 @@ if ! command -v npx &>/dev/null; then
     bash "$ROOT_DIR/node/install.sh"
 fi
 
-npx skills add https://github.com/quickcall-dev/skills --yes --global
+npx --yes skills add https://github.com/quickcall-dev/skills --yes --global
 ok "QuickCall skills installed"
 
 # ─── Pi system skills ───
