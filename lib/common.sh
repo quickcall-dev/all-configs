@@ -43,8 +43,45 @@ ensure_cmd() {
     else
         warn "$cmd not found — installing"
         pkg_install "$pkg"
-        ok "$cmd installed"
+        if command -v "$cmd" &>/dev/null; then
+            ok "$cmd installed"
+        else
+            fail "$cmd installation failed"
+            return 1
+        fi
     fi
+}
+
+brew_cask_installed() {
+    local name="$1"
+    command -v brew &>/dev/null && brew list --cask "$name" &>/dev/null 2>&1
+}
+
+brew_formula_installed() {
+    local name="$1"
+    command -v brew &>/dev/null && brew list "$name" &>/dev/null 2>&1
+}
+
+brew_install_cask() {
+    local name="$1"
+    if brew_cask_installed "$name"; then
+        ok "$name already installed"
+        return 0
+    fi
+    step "Installing $name"
+    brew install --cask "$name"
+    ok "$name installed"
+}
+
+brew_install_formula() {
+    local name="$1"
+    if brew_formula_installed "$name"; then
+        ok "$name already installed"
+        return 0
+    fi
+    step "Installing $name"
+    brew install "$name"
+    ok "$name installed"
 }
 
 backup_file() {

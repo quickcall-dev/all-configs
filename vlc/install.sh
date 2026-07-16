@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask vlc
+    brew_install_cask vlc
 else
     warn "Homebrew not found; skipping VLC app install"
 fi

@@ -21,11 +21,11 @@ else
 fi
 
 step "Installing Brave"
-brew install --cask brave-browser
+brew_install_cask brave-browser
 ok "Brave installed"
 
 step "Installing Google Chrome"
-brew install --cask google-chrome
+brew_install_cask google-chrome
 ok "Google Chrome installed"
 
 echo ""

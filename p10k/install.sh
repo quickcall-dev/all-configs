@@ -13,10 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    if ! brew list powerlevel10k &>/dev/null 2&gt;1; then
-        brew install powerlevel10k
-    fi
-    ok "powerlevel10k installed"
+    brew_install_formula powerlevel10k
 else
     warn "Homebrew not found; skipping powerlevel10k install"
     exit 0
@@ -34,7 +31,7 @@ if [[ -f "$ZSHRC" ]]; then
             echo ""
             echo "# Enable Powerlevel10k"
             echo "source \"$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme\""
-            echo "[[ -f ~/.p10k.zsh ]] \u0026\u0026 source ~/.p10k.zsh"
+            echo "[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh"
         } >> "$ZSHRC"
         ok "p10k sourced in ${D}~/.zshrc${R}"
     else

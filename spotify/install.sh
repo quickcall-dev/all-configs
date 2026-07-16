@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask spotify
+    brew_install_cask spotify
 else
     warn "Homebrew not found; skipping Spotify app install"
 fi

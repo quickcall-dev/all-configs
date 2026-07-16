@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask aldente
+    brew_install_cask aldente
 else
     warn "Homebrew not found; skipping AlDente app install"
 fi

@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask visual-studio-code
+    brew_install_cask visual-studio-code
 else
     warn "Homebrew not found; skipping VS Code app install"
 fi

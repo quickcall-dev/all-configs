@@ -1,0 +1,3 @@
+name = "bitwarden"
+description = "Installs Bitwarden via Homebrew"
+platforms = ["mac"]

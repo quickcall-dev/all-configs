@@ -1,0 +1,3 @@
+name = "raycast"
+description = "Installs Raycast via Homebrew"
+platforms = ["mac"]

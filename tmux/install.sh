@@ -9,13 +9,15 @@ step "Installing tmux config (oh-my-tmux)"
 
 ensure_cmd tmux
 
+ensure_cmd git
+
 # ─── oh-my-tmux ───
 
 OMT_DIR="$HOME/.oh-my-tmux"
 if [[ -d "$OMT_DIR" ]]; then
     ok "oh-my-tmux already cloned"
 else
-    git clone --single-branch https://github.com/gpakosz/.tmux.git "$OMT_DIR"
+    git clone --depth 1 --single-branch https://github.com/gpakosz/.tmux.git "$OMT_DIR"
     ok "oh-my-tmux cloned"
 fi
 

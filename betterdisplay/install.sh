@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask betterdisplay
+    brew_install_cask betterdisplay
 else
     warn "Homebrew not found; skipping BetterDisplay app install"
 fi

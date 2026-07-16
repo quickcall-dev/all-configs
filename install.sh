@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
+trap 'echo ""; fail "Interrupted"; exit 130' INT
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" &&gt;2; exit 1; }
+source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" >&2; exit 1; }
 
 GROUP_ORDER=(Browsers Media Editors Terminals Shell Runtimes AI Comms DevTools Fonts System Utilities Extras)
 
-MODULE_ORDER=(browsers spotify vlc nvim vscode zed ghostty tmux zoxide p10k node uv claude codex pi caveman skills slack github hf ssh-keygen fonts karabiner aldente betterdisplay statusline)
+MODULE_ORDER=(browsers spotify vlc nvim vscode zed ghostty tmux zoxide p10k node uv claude codex pi caveman skills slack github hf ssh-keygen fonts karabiner aldente betterdisplay raycast bitwarden statusline)
 
 module_group() {
     case "$1" in
-        betterdisplay|aldente) echo "Utilities" ;;
+        betterdisplay|aldente|raycast|bitwarden) echo "Utilities" ;;
         browsers) echo "Browsers" ;;
         vlc|spotify) echo "Media" ;;
         nvim|vscode|zed) echo "Editors" ;;
@@ -38,6 +40,11 @@ ensure_brew() {
             return 0
         fi
     done
+
+    if ! sudo -n true 2>/dev/null; then
+        fail "Homebrew install requires passwordless sudo. Install it manually: https://brew.sh"
+        exit 1
+    fi
 
     step "Homebrew not found — installing"
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -184,7 +191,7 @@ run_ui() {
 
     declare -a failed=()
     for mod_name in "${selected_modules[@]}"; do
-        if ! gum spin --spinner dot --title "Installing $mod_name" -- bash "$ROOT_DIR/$mod_name/install.sh"; then
+        if ! gum spin --show-output --spinner dot --title "Installing $mod_name" -- bash "$ROOT_DIR/$mod_name/install.sh"; then
             failed+=("$mod_name")
         fi
     done

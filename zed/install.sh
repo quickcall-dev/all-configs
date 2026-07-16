@@ -13,7 +13,7 @@ if [[ "$PLATFORM" != "mac" ]]; then
 fi
 
 if command -v brew &>/dev/null; then
-    brew install --cask zed
+    brew_install_cask zed
 else
     warn "Homebrew not found; skipping Zed app install"
 fi
