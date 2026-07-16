@@ -41,6 +41,7 @@ cd all-configs
 | **p10k** | Powerlevel10k prompt config and theme |
 | **raycast** | Installs Raycast via Homebrew |
 | **bitwarden** | Installs Bitwarden via Homebrew |
+| **rectangle** | Installs Rectangle via Homebrew |
 
 ## Standalone usage
 
