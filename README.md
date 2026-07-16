@@ -37,6 +37,7 @@ cd all-configs
 | **vscode** | VS Code user settings, keybindings, and tasks |
 | **zed** | Zed editor settings with Nerd Font terminal icons |
 | **zoxide** | Smarter `cd` command with learning and fzf integration |
+| **p10k** | Powerlevel10k prompt config and theme |
 
 ## Standalone usage
 

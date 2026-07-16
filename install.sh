@@ -6,6 +6,8 @@ source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" &&gt
 
 GROUP_ORDER=(Browsers Media Editors Terminals Shell Runtimes AI Comms DevTools Fonts System Utilities Extras)
 
+MODULE_ORDER=(browsers spotify vlc nvim vscode zed ghostty tmux zoxide p10k node uv claude codex pi caveman skills slack github hf ssh-keygen fonts karabiner aldente betterdisplay statusline)
+
 module_group() {
     case "$1" in
         betterdisplay|aldente) echo "Utilities" ;;
@@ -13,7 +15,7 @@ module_group() {
         vlc|spotify) echo "Media" ;;
         nvim|vscode|zed) echo "Editors" ;;
         ghostty|tmux) echo "Terminals" ;;
-        zoxide) echo "Shell" ;;
+        zoxide|p10k) echo "Shell" ;;
         karabiner) echo "System" ;;
         node|uv) echo "Runtimes" ;;
         claude|pi|caveman|skills|codex) echo "AI" ;;
@@ -115,15 +117,33 @@ run_ui() {
 
     declare -a ordered_names=()
     declare -a ordered_descs=()
-    for group in "${GROUP_ORDER[@]}"; do
+    declare -a ordered_groups=()
+
+    for mod in "${MODULE_ORDER[@]}"; do
         for i in "${!module_names[@]}"; do
-            [[ "${module_groups[$i]}" == "$group" ]] || continue
+            [[ "${module_names[$i]}" == "$mod" ]] || continue
             ordered_names+=("${module_names[$i]}")
             ordered_descs+=("${module_descs[$i]}")
+            ordered_groups+=("${module_groups[$i]}")
+            break
         done
     done
+
+    for i in "${!module_names[@]}"; do
+        local found=0
+        for mod in "${MODULE_ORDER[@]}"; do
+            [[ "${module_names[$i]}" == "$mod" ]] && { found=1; break; }
+        done
+        if [[ "$found" -eq 0 ]]; then
+            ordered_names+=("${module_names[$i]}")
+            ordered_descs+=("${module_descs[$i]}")
+            ordered_groups+=("${module_groups[$i]}")
+        fi
+    done
+
     module_names=("${ordered_names[@]}")
     module_descs=("${ordered_descs[@]}")
+    module_groups=("${ordered_groups[@]}")
 
     max_len=0
     for name in "${module_names[@]}"; do
