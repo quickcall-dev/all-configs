@@ -29,16 +29,11 @@ ok "zoxide installed"
 
 step "Enabling zoxide in shell"
 
-ZOXIDE_INIT='
-# zoxide — smarter cd
-if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash)"
-fi'
-
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
     if ! grep -Fq "zoxide init" "$rc" 2>/dev/null; then
-        printf '%s\n' "$ZOXIDE_INIT" >> "$rc"
+        shell=$(basename "$rc" | sed 's/^\.//')
+        printf '# zoxide — smarter cd\nif command -v zoxide >/dev/null 2>&1; then\n    eval "$(zoxide init %s)"\nfi\n' "$shell" >> "$rc"
         ok "zoxide enabled in $(basename "$rc")"
     else
         ok "zoxide already enabled in $(basename "$rc")"
