@@ -7,7 +7,6 @@
     "npm:@tintinweb/pi-subagents",
     "npm:pi-web-access",
     "npm:pi-caveman",
-    "npm:remote-pi",
     "https://github.com/obra/superpowers"
   ],
   "treeFilterMode": "all",
