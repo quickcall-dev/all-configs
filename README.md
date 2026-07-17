@@ -1,6 +1,6 @@
 # all-configs
 
-Modular dotfiles and environment setup for Claude Code, terminal tools, editors, and developer tooling.
+Modular dotfiles and environment setup for Claude Code, terminal tools, editors, developer tooling, and macOS productivity apps.
 
 ## Quick start
 
@@ -32,6 +32,10 @@ cd all-configs
 | **pi** | Pi coding agent CLI, settings, and package extensions |
 | **skills** | QuickCall skills + Pi system skills |
 | **ssh-keygen** | Generate SSH keys, update `~/.ssh/config`, test GitHub auth |
+| **aqua-voice** | Installs Aqua Voice via Homebrew |
+| **keycastr**   | Installs KeyCastr via Homebrew |
+| **presentify** | Installs Presentify from the Mac App Store |
+| **zoom**       | Installs Zoom via Homebrew |
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
 | **uv** | Astral uv — fast Python package and project manager |

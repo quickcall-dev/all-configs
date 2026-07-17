@@ -1,0 +1,3 @@
+name = "aqua-voice"
+description = "Installs Aqua Voice via Homebrew"
+platforms = ["mac"]
