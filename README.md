@@ -1,6 +1,6 @@
 # all-configs
 
-Modular dotfiles and environment setup for Claude Code, terminal tools, editors, developer tooling, and macOS productivity apps.
+Modular dotfiles and developer environment suite for macOS — editors, terminals, AI tools, and productivity apps.
 
 ## Quick start
 
