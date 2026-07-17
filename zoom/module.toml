@@ -1,3 +1,0 @@
-name = "zoom"
-description = "Installs Zoom via Homebrew"
-platforms = ["mac"]

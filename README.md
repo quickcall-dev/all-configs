@@ -35,7 +35,6 @@ cd all-configs
 | **aqua-voice** | Installs Aqua Voice via Homebrew |
 | **keycastr**   | Installs KeyCastr via Homebrew |
 | **presentify** | Installs Presentify from the Mac App Store |
-| **zoom**       | Installs Zoom via Homebrew |
 | **statusline** | Status bar + turn counter for Claude Code |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
 | **uv** | Astral uv — fast Python package and project manager |
