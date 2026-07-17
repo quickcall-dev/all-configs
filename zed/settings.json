@@ -13,7 +13,7 @@
     "tree_view": true,
   },
   "project_panel": {
-    "dock": "left",
+    "dock": "right",
   },
   "disable_ai": true,
   "agent": {
@@ -196,11 +196,13 @@
   "ui_font_size": 16,
   "buffer_font_size": 15,
   "terminal": {
+    "font_size": 14.0,
+    "dock": "left",
     "font_family": "MesloLGS Nerd Font Mono",
   },
   "theme": {
     "mode": "light",
     "light": "Fleet Light",
-    "dark": "Fleet Dark",
+    "dark": "Nord Dark",
   },
 }
