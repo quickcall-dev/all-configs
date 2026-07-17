@@ -32,4 +32,11 @@ scrollback-limit = 100000
 
 mouse-hide-while-typing = true
 copy-on-select = clipboard
+
+# Send Option as Alt so Meta keybindings work in tmux
+macos-option-as-alt = true
+
+# Forward Alt-Backspace to tmux/pi instead of handling it locally
+keybind = alt+backspace=text:\x1b\x7f
+
 shell-integration = detect

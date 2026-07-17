@@ -73,6 +73,9 @@ set -g status-position top
 set -g extended-keys on
 set -g extended-keys-format csi-u
 
+setw -g xterm-keys on
+set -as terminal-overrides ',*:kbs=\177'
+
 # Editor for programs launched inside tmux, including pi Ctrl+G.
 set-environment -g VISUAL /opt/homebrew/bin/nvim
 set-environment -g EDITOR /opt/homebrew/bin/nvim
