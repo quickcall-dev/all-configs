@@ -45,6 +45,9 @@ cd all-configs
 | **raycast** | Installs Raycast via Homebrew |
 | **bitwarden** | Installs Bitwarden via Homebrew |
 | **rectangle** | Installs Rectangle via Homebrew |
+| **ffmpeg** | Cross-platform audio/video conversion and streaming toolkit |
+| **ncdu** | Interactive disk usage analyzer |
+| **yt-dlp** | YouTube/video downloader and extractor |
 
 ## Standalone usage
 
