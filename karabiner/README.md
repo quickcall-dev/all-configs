@@ -7,14 +7,15 @@ Local Karabiner-Elements config for this repo.
 Caps Lock acts as super key.
 
 App launchers:
-- `Caps+g` Google Chrome
 - `Caps+b` Brave Browser
 - `Caps+d` Zed
+- `Caps+f` Finder
+- `Caps+g` Google Chrome
+- `Caps+m` WhatsApp desktop
+- `Caps+o` Obsidian
 - `Caps+s` Slack
 - `Caps+t` Ghostty
 - `Caps+w` WhatsApp Web
-- `Caps+m` WhatsApp desktop
-- `Caps+o` Obsidian
 
 Other mappings:
 - `Caps+l` clears terminal in supported terminal apps
