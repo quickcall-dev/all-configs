@@ -1,6 +1,6 @@
 # all-configs
 
-Modular dotfiles and developer environment suite for macOS — editors, terminals, AI tools, and productivity apps.
+Modular dotfiles and developer environment suite for macOS and Linux — editors, terminals, AI tools, and productivity apps.
 
 ## Quick start
 
@@ -8,12 +8,28 @@ Modular dotfiles and developer environment suite for macOS — editors, terminal
 git clone https://github.com/quickcall-dev/all-configs.git
 cd all-configs
 
-# Interactive TUI — pick what you want
+# Interactive Textual TUI — search, select, install
 ./install.sh
 
 # Or install specific modules directly
 ./install.sh nvim tmux zoxide github ssh-keygen
 ```
+
+The TUI is built with [Textual](https://textual.textualize.io/). It uses [uv](https://docs.astral.sh/uv/) to provision its Python environment.
+
+Keys inside the TUI:
+
+| Key | Action |
+|-----|--------|
+| `Tab` | move focus between search and module list |
+| `/` or just type | search modules |
+| `Space` | toggle selected module |
+| `a` | select all visible |
+| `n` | select none |
+| `i` | invert selection |
+| `Enter` | install selected |
+| `?` | show keybindings |
+| `q` | quit |
 
 ## Modules
 
@@ -117,7 +133,7 @@ Copy the printed public key and add it to the target host.
 - `git`, `curl`
 - `sudo` access (modules install system packages like `build-essential`, `fontconfig`, `gh`, `nodejs`, `nvim`, `uv`)
 - On headless/VM setups: **passwordless sudo** is recommended so modules can install packages without prompts
-- Optional: `jq` for statusline, `python3.11+` or `uv` for the TUI installer
+- `uv` for the interactive TUI (installed automatically if missing)
 
 If you cannot use passwordless sudo, run the relevant module as root or install the system dependencies manually first.
 

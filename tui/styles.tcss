@@ -1,0 +1,154 @@
+Screen {
+    background: #eff1f5;
+    color: #4c4f69;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    layout: vertical;
+}
+
+#header {
+    height: 3;
+    content-align: center middle;
+    background: #1e66f5;
+    color: #ffffff;
+    text-style: bold;
+}
+
+#search {
+    margin: 1 2;
+    height: 3;
+    border: solid #bcc0cc;
+    background: #ffffff;
+    color: #4c4f69;
+}
+
+#module-table {
+    margin: 0 2;
+    height: 1fr;
+    border: solid #bcc0cc;
+    background: #ffffff;
+}
+
+#module-table .datatable--cursor {
+    background: #ccd0da;
+}
+
+#module-table .datatable--hover {
+    background: #e6e9ef;
+}
+
+#footer {
+    height: 1;
+    content-align: center middle;
+    background: #e6e9ef;
+    color: #6c6f85;
+}
+
+#splash-overlay {
+    position: absolute;
+    offset: 0 0;
+    width: 100%;
+    height: 100%;
+    background: #eff1f5;
+    align: center middle;
+}
+
+#splash {
+    width: 40;
+    height: auto;
+    padding: 2 3;
+    border: solid #1e66f5;
+    background: #ffffff;
+    align: center middle;
+}
+
+#splash-title {
+    text-align: center;
+    color: #1e66f5;
+    text-style: bold;
+}
+
+#splash-subtitle {
+    text-align: center;
+    color: #6c6f85;
+}
+
+#splash-progress {
+    margin: 1 0;
+}
+
+#help {
+    width: 40;
+    height: auto;
+    padding: 1 2;
+    border: solid #1e66f5;
+    background: #ffffff;
+    align: center middle;
+}
+
+#help-text {
+    color: #4c4f69;
+    margin: 1 0;
+}
+
+#confirm {
+    width: 50;
+    height: auto;
+    padding: 1 2;
+    border: solid #1e66f5;
+    background: #ffffff;
+    align: center middle;
+}
+
+#confirm-title {
+    text-align: center;
+    text-style: bold;
+    color: #4c4f69;
+    margin: 1 0;
+}
+
+#confirm-list {
+    height: 1fr;
+    margin: 1 0;
+    color: #6c6f85;
+}
+
+#confirm-buttons {
+    height: auto;
+    align: center middle;
+    margin: 1 0;
+}
+
+#install {
+    width: 80;
+    height: 24;
+    padding: 1 2;
+    border: solid #1e66f5;
+    background: #ffffff;
+    align: center middle;
+}
+
+#install-title {
+    text-align: center;
+    text-style: bold;
+    color: #4c4f69;
+    margin: 1 0;
+}
+
+#install-log {
+    height: 1fr;
+    border: solid #bcc0cc;
+    background: #ffffff;
+    margin: 1 0;
+}
+
+#close {
+    width: 100%;
+}
+
+Button {
+    margin: 0 1;
+}

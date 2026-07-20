@@ -7,3 +7,4 @@ tmux/test-tmux.sh
 tmux/tests/
 this
 .worktrees/
+__pycache__/
