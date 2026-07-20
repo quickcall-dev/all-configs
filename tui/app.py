@@ -54,6 +54,7 @@ class AllConfigsApp(App):
 
     def __init__(self, root: Path | None = None) -> None:
         super().__init__()
+        self.dark = False
         self.root = root or Path(__file__).resolve().parent.parent
         self.modules: list[Module] = []
         self.visible_modules: list[Module] = []
@@ -80,8 +81,8 @@ class AllConfigsApp(App):
 
     def _checkbox(self, name: str) -> Text:
         if name in self.selected:
-            return Text("[x]", style="bold #1e66f5")
-        return Text("[ ]", style="#6c6f85")
+            return Text("[x]", style="bold #2563eb")
+        return Text("[ ]", style="#9ca3af")
 
     def refresh_table(self, table: ModuleTable | None = None) -> None:
         if table is None:
