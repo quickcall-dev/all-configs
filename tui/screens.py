@@ -7,6 +7,7 @@ from pathlib import Path
 import pyfiglet
 from rich.text import Text
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import ModalScreen, Screen
 from textual.widgets import Button, Input, ProgressBar, RichLog, Static
@@ -32,8 +33,8 @@ q        quit
 """.strip()
 
 
-_HEADER_FIG = pyfiglet.Figlet(font="digital")
-_SPLASH_FIG = pyfiglet.Figlet(font="big")
+_HEADER_FIG = pyfiglet.Figlet(font="rectangles")
+_SPLASH_FIG = pyfiglet.Figlet(font="rectangles")
 
 
 def _fig_text(fig: pyfiglet.Figlet, text: str, style: str) -> Text:
@@ -86,6 +87,8 @@ class MainScreen(Screen):
 class HelpScreen(ModalScreen):
     """Keybindings help."""
 
+    BINDINGS = [Binding("escape", "dismiss", "")]
+
     def compose(self) -> ComposeResult:
         with Container(id="help"):
             yield Static(KEYS_TEXT, id="help-text")
@@ -97,6 +100,8 @@ class HelpScreen(ModalScreen):
 
 class ConfirmScreen(ModalScreen[bool]):
     """Confirm before installing."""
+
+    BINDINGS = [Binding("escape", "dismiss", "")]
 
     def __init__(self, modules: list[str]) -> None:
         self.modules = modules
@@ -116,6 +121,8 @@ class ConfirmScreen(ModalScreen[bool]):
 
 class InstallScreen(ModalScreen[list[str]]):
     """Run selected installers and show output."""
+
+    BINDINGS = [Binding("escape", "dismiss", "")]
 
     def __init__(self, modules: list[Module], root: Path) -> None:
         self.modules = modules

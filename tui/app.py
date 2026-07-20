@@ -45,6 +45,8 @@ class AllConfigsApp(App):
     TITLE = "all-configs installer"
     BINDINGS = [
         Binding("q", "quit", "Quit"),
+        Binding("ctrl+q", "force_quit", "Quit"),
+        Binding("ctrl+c", "force_quit", "Quit"),
         Binding("a", "select_all", "Select All"),
         Binding("n", "select_none", "Select None"),
         Binding("i", "invert", "Invert"),
@@ -209,4 +211,7 @@ class AllConfigsApp(App):
     def action_quit(self) -> None:
         if self._typing_in_search():
             return
+        self.exit(1 if self.failed_modules else 0)
+
+    def action_force_quit(self) -> None:
         self.exit(1 if self.failed_modules else 0)
