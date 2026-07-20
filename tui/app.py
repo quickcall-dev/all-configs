@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+import subprocess
 import sys
 import tomllib
 from pathlib import Path
@@ -14,13 +16,36 @@ from textual.widgets import Input, Static
 from tui.screens import (
     ConfirmScreen,
     HelpScreen,
-    InstallScreen,
     MainScreen,
     Module,
+    RunScreen,
 )
 from tui.widgets import ModuleTable
 
 PLATFORM = "mac" if sys.platform == "darwin" else "linux"
+
+
+def _is_installed(package: str) -> bool:
+    """Check whether a package is installed on the current platform."""
+    if shutil.which(package):
+        return True
+    if PLATFORM == "mac" and shutil.which("brew"):
+        for flag in ("--cask", ""):
+            if flag:
+                result = subprocess.run(
+                    ["brew", "list", flag, package],
+                    capture_output=True,
+                    check=False,
+                )
+            else:
+                result = subprocess.run(
+                    ["brew", "list", package],
+                    capture_output=True,
+                    check=False,
+                )
+            if result.returncode == 0:
+                return True
+    return False
 
 
 def load_modules(root: Path) -> list[Module]:
@@ -34,7 +59,17 @@ def load_modules(root: Path) -> list[Module]:
         platforms = data.get("platforms", ["mac", "linux"])
         if PLATFORM not in platforms:
             continue
-        modules.append(Module(name=name, description=description, platforms=platforms))
+        package = data.get("package", name)
+        installed = _is_installed(package)
+        modules.append(
+            Module(
+                name=name,
+                description=description,
+                platforms=platforms,
+                package=package,
+                installed=installed,
+            )
+        )
     return modules
 
 
@@ -51,6 +86,7 @@ class AllConfigsApp(App):
         Binding("n", "select_none", "Select None"),
         Binding("i", "invert", "Invert"),
         Binding("enter", "install", "Install"),
+        Binding("u", "uninstall", "Uninstall"),
         Binding("?", "help", "Help"),
     ]
 
@@ -86,6 +122,11 @@ class AllConfigsApp(App):
             return Text("[x]", style="bold #2563eb")
         return Text("[ ]", style="#9ca3af")
 
+    def _status_text(self, module: Module) -> Text:
+        if module.installed:
+            return Text("installed", style="bold #16a34a")
+        return Text("-")
+
     def refresh_table(self, table: ModuleTable | None = None) -> None:
         if table is None:
             table = self.screen.query_one("#module-table", ModuleTable)
@@ -104,6 +145,7 @@ class AllConfigsApp(App):
                 self._checkbox(module.name),
                 module.name,
                 module.description,
+                self._status_text(module),
                 ", ".join(module.platforms),
                 key=module.name,
             )
@@ -120,6 +162,7 @@ class AllConfigsApp(App):
                     "n none",
                     "i invert",
                     "enter install",
+                    "u uninstall",
                     "? help",
                     "q quit",
                 ]
@@ -180,31 +223,105 @@ class AllConfigsApp(App):
             table.update_cell_at(Coordinate(i, 0), self._checkbox(module.name))
         self.update_footer()
 
+    def _selected_modules(self) -> list[Module]:
+        return [m for m in self.modules if m.name in self.selected]
+
     def action_install(self) -> None:
         if not self._on_main_screen() or self._typing_in_search() or not self.selected:
             return
-        self.push_screen(ConfirmScreen(sorted(self.selected)), callback=self._on_confirm)
-
-    def action_help(self) -> None:
-        if not self._on_main_screen() or self._typing_in_search():
+        to_install = [m for m in self._selected_modules() if not m.installed]
+        already = [m.name for m in self._selected_modules() if m.installed]
+        if not to_install:
+            self.notify(
+                f"All selected already installed: {', '.join(already)}",
+                title="Nothing to install",
+                severity="information",
+            )
             return
-        self.push_screen(HelpScreen())
+        if already:
+            self.notify(
+                f"Skipping already installed: {', '.join(already)}",
+                title="Skipping",
+                severity="information",
+            )
+        self.push_screen(
+            ConfirmScreen(sorted(m.name for m in to_install)),
+            callback=lambda confirmed: self._on_install_confirm(confirmed, to_install),
+        )
 
-    def _on_confirm(self, confirmed: bool) -> None:
+    def _on_install_confirm(self, confirmed: bool, to_install: list[Module]) -> None:
         if not confirmed:
             return
-        selected_modules = [m for m in self.modules if m.name in self.selected]
-        self.push_screen(InstallScreen(selected_modules, self.root), callback=self._on_install_done)
+        self.push_screen(
+            RunScreen(
+                to_install,
+                "Installing",
+                lambda m: ["bash", str(self.root / m.name / "install.sh")],
+            ),
+            callback=self._on_install_done,
+        )
 
     def _on_install_done(self, failed: list[str]) -> None:
         self.failed_modules = failed
+        # Refresh status for installed modules.
+        for i, module in enumerate(self.modules):
+            if module.name in self.selected and module.name not in failed:
+                self.modules = [
+                    *self.modules[:i],
+                    module.replace(installed=True),
+                    *self.modules[i + 1 :],
+                ]
+        self.selected.clear()
+        self.refresh_table()
         if failed:
             self.notify(f"Finished with {len(failed)} failures", title="Done", severity="error")
         else:
             self.notify("All modules installed", title="Done", severity="information")
 
+    def action_uninstall(self) -> None:
+        if not self._on_main_screen() or self._typing_in_search() or not self.selected:
+            return
+        to_uninstall = [m for m in self._selected_modules() if m.installed]
+        not_installed = [m.name for m in self._selected_modules() if not m.installed]
+        if not to_uninstall:
+            self.notify(
+                "None of the selected modules are marked installed",
+                title="Nothing to uninstall",
+                severity="information",
+            )
+            return
+        if not_installed:
+            self.notify(
+                f"Skipping not-installed: {', '.join(not_installed)}",
+                title="Skipping",
+                severity="information",
+            )
+        self.push_screen(
+            RunScreen(
+                to_uninstall,
+                "Uninstalling",
+                lambda m: ["bash", str(self.root / "lib" / "uninstall.sh"), m.name],
+            ),
+            callback=self._on_uninstall_done,
+        )
+
+    def _on_uninstall_done(self, failed: list[str]) -> None:
+        for i, module in enumerate(self.modules):
+            if module.name in self.selected and module.name not in failed:
+                self.modules = [
+                    *self.modules[:i],
+                    module.replace(installed=False),
+                    *self.modules[i + 1 :],
+                ]
+        self.selected.clear()
+        self.refresh_table()
+        if failed:
+            self.notify(f"Uninstall finished with {len(failed)} failures", title="Done", severity="error")
+        else:
+            self.notify("All selected modules uninstalled", title="Done", severity="information")
+
     def action_help(self) -> None:
-        if self._typing_in_search():
+        if not self._on_main_screen() or self._typing_in_search():
             return
         self.push_screen(HelpScreen())
 
@@ -215,3 +332,6 @@ class AllConfigsApp(App):
 
     def action_force_quit(self) -> None:
         self.exit(1 if self.failed_modules else 0)
+
+    def compose(self) -> ComposeResult:
+        yield Static("")

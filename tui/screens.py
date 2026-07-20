@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,6 +19,8 @@ class Module:
     name: str
     description: str
     platforms: list[str]
+    package: str
+    installed: bool = False
 
 
 KEYS_TEXT = """
@@ -26,6 +29,7 @@ a        select all visible
 n        select none
 i        invert selection
 enter    install selected
+u        uninstall selected
 ?        show this help
 q / ctrl+q / ctrl+c    quit
 """.strip()
@@ -100,33 +104,38 @@ class ConfirmScreen(ModalScreen[bool]):
         self.dismiss(event.button.id == "install")
 
 
-class InstallScreen(ModalScreen[list[str]]):
-    """Run selected installers and show output."""
+class RunScreen(ModalScreen[list[str]]):
+    """Run a command for each selected module and show output."""
 
     BINDINGS = [Binding("escape", "dismiss", "")]
 
-    def __init__(self, modules: list[Module], root: Path) -> None:
+    def __init__(
+        self,
+        modules: list[Module],
+        title: str,
+        cmd_for_module: Callable[[Module], list[str]],
+    ) -> None:
         self.modules = modules
-        self.root = root
+        self.title = title
+        self.cmd_for_module = cmd_for_module
         self.failed: list[str] = []
         super().__init__()
 
     def compose(self) -> ComposeResult:
         with Container(id="install"):
-            yield Static(f"Installing {len(self.modules)} module(s)", id="install-title")
+            yield Static(f"{self.title} {len(self.modules)} module(s)", id="install-title")
             yield RichLog(id="install-log")
             yield Button("Close", id="close", disabled=True)
 
     def on_mount(self) -> None:
-        asyncio.create_task(self._run_installs())
+        asyncio.create_task(self._run())
 
-    async def _run_installs(self) -> None:
+    async def _run(self) -> None:
         log = self.query_one("#install-log", RichLog)
         for module in self.modules:
             log.write(f"-> {module.name}")
             proc = await asyncio.create_subprocess_exec(
-                "bash",
-                str(self.root / module.name / "install.sh"),
+                *self.cmd_for_module(module),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
             )

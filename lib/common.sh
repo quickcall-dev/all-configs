@@ -35,6 +35,51 @@ pkg_install() {
     fi
 }
 
+pkg_check() {
+    local pkg="$1"
+    if [[ "$PLATFORM" == "mac" ]]; then
+        if command -v brew &>/dev/null; then
+            brew list --cask "$pkg" &>/dev/null && return 0
+            brew list "$pkg" &>/dev/null && return 0
+        fi
+    fi
+    command -v "$pkg" &>/dev/null && return 0
+    if command -v dpkg &>/dev/null && dpkg -l "$pkg" &>/dev/null 2>&1; then
+        return 0
+    fi
+    if command -v rpm &>/dev/null && rpm -q "$pkg" &>/dev/null 2>&1; then
+        return 0
+    fi
+    if command -v pacman &>/dev/null && pacman -Q "$pkg" &>/dev/null 2>&1; then
+        return 0
+    fi
+    return 1
+}
+
+pkg_uninstall() {
+    local pkg="$1"
+    if [[ "$PLATFORM" == "mac" ]]; then
+        if command -v brew &>/dev/null; then
+            if brew list --cask "$pkg" &>/dev/null 2>&1; then
+                yes | NONINTERACTIVE=1 CI=1 brew uninstall --cask "$pkg"
+                return 0
+            elif brew list "$pkg" &>/dev/null 2>&1; then
+                yes | NONINTERACTIVE=1 CI=1 brew uninstall "$pkg"
+                return 0
+            fi
+        fi
+    fi
+    if command -v apt-get &>/dev/null; then
+        sudo apt-get remove -y -qq "$pkg"
+    elif command -v dnf &>/dev/null; then
+        sudo dnf remove -y "$pkg"
+    elif command -v pacman &>/dev/null; then
+        sudo pacman -R --noconfirm "$pkg"
+    else
+        fail "No supported package manager for uninstall"; return 1
+    fi
+}
+
 ensure_cmd() {
     local cmd="$1" pkg="${2:-$1}"
     if command -v "$cmd" &>/dev/null; then

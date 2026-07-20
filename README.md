@@ -27,9 +27,10 @@ Keys inside the TUI:
 | `a` | select all visible |
 | `n` | select none |
 | `i` | invert selection |
-| `Enter` | install selected |
+| `Enter` | install selected (skips already-installed) |
+| `u` | uninstall selected modules |
 | `?` | show keybindings |
-| `q` | quit |
+| `q` / `Ctrl+Q` / `Ctrl+C` | quit |
 
 ## Modules
 

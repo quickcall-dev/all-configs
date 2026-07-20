@@ -1,3 +1,4 @@
 name = "nvim"
 description = "Neovim config with Lazy, treesitter, fzf"
 platforms = ["mac", "linux"]
+package = "neovim"

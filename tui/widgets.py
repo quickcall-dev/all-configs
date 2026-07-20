@@ -9,9 +9,10 @@ class ModuleTable(DataTable):
 
     def on_mount(self) -> None:
         self.add_column("", key="selected", width=3)
-        self.add_column("Module", key="module")
+        self.add_column("Module", key="module", width=15)
         self.add_column("Description", key="description")
-        self.add_column("Platforms", key="platforms")
+        self.add_column("Status", key="status", width=12)
+        self.add_column("Platforms", key="platforms", width=11)
 
     def on_key(self, event: events.Key) -> None:
         if event.key == "space":

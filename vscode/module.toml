@@ -1,3 +1,4 @@
 name = "vscode"
 description = "Installs VS Code via Homebrew and copies settings"
 platforms = ["mac"]
+package = "visual-studio-code"
