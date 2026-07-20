@@ -10,11 +10,18 @@ Screen {
 }
 
 #header {
-    height: 3;
-    content-align: center middle;
-    background: #2563eb;
-    color: #ffffff;
-    text-style: bold;
+    height: 6;
+    background: #111827;
+    align: center middle;
+}
+
+#header-title {
+    text-align: left;
+}
+
+#header-subtitle {
+    text-align: center;
+    color: #9ca3af;
 }
 
 #search {
@@ -73,7 +80,7 @@ Screen {
 }
 
 #splash-title {
-    text-align: center;
+    text-align: left;
     color: #2563eb;
     text-style: bold;
 }

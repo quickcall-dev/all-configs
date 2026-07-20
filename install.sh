@@ -39,4 +39,4 @@ fi
 # Interactive TUI mode
 ensure_uv
 cd "$ROOT_DIR"
-uv run --python 3.12 --with textual python3 -m tui
+uv run --python 3.12 --with textual --with pyfiglet python3 -m tui

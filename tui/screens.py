@@ -4,6 +4,8 @@ import asyncio
 from dataclasses import dataclass
 from pathlib import Path
 
+import pyfiglet
+from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import ModalScreen, Screen
@@ -30,18 +32,34 @@ q        quit
 """.strip()
 
 
+_HEADER_FIG = pyfiglet.Figlet(font="digital")
+_SPLASH_FIG = pyfiglet.Figlet(font="big")
+
+
+def _fig_text(fig: pyfiglet.Figlet, text: str, style: str) -> Text:
+    rendered = fig.renderText(text)
+    lines = [line.rstrip() for line in rendered.splitlines()]
+    while lines and lines[0] == "":
+        lines.pop(0)
+    while lines and lines[-1] == "":
+        lines.pop()
+    return Text("\n".join(lines), style=style)
+
+
 class MainScreen(Screen):
     """Single-screen module selector with a splash overlay."""
 
     def compose(self) -> ComposeResult:
         with Vertical(id="main"):
-            yield Static("all-configs installer", id="header")
+            with Container(id="header"):
+                yield Static(_fig_text(_HEADER_FIG, "all-configs", "bold #60a5fa"), id="header-title")
+                yield Static("installer", id="header-subtitle")
             yield Input(placeholder="search modules...", id="search")
             yield ModuleTable(id="module-table")
             yield Static("", id="footer")
             with Container(id="splash-overlay"):
                 with Container(id="splash"):
-                    yield Static("all-configs", id="splash-title")
+                    yield Static(_fig_text(_SPLASH_FIG, "all-configs", "bold #2563eb"), id="splash-title")
                     yield Static("installer", id="splash-subtitle")
                     yield ProgressBar(total=100, id="splash-progress")
 
