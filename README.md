@@ -43,6 +43,8 @@ Keys inside the TUI:
 | **ghostty** | Ghostty terminal config + themes |
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
 | **docker** | Installs Docker Desktop via Homebrew |
+| **moshi** | Moshi remote-login hook + mosh transport via Homebrew |
+| **tailscale** | Tailscale mesh VPN via Homebrew |
 | **karabiner** | Karabiner-Elements key remaps |
 | **node** | Node.js, npm, npx via system package manager |
 | **nvim** | Neovim config with LazyVim, treesitter, fzf |

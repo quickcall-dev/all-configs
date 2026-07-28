@@ -57,16 +57,31 @@ class MainScreen(Screen):
         self.app.update_footer(footer)
         self._progress = 0
         self._bar = self.query_one("#splash-progress", ProgressBar)
+        self._splash_removed = False
         self._splash_timer = self.set_interval(0.05, self._advance_splash)
 
-    def _advance_splash(self) -> None:
-        self._progress += 6
-        if self._progress >= 100:
-            self._bar.update(progress=100)
-            self._splash_timer.stop()
-            self.query_one("#splash-overlay", Container).remove()
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        """Enter in search box installs selected modules or moves focus to the table."""
+        table = self.query_one("#module-table", ModuleTable)
+        if self.app.selected:
+            self.app._install_selected()
         else:
-            self._bar.update(progress=self._progress)
+            table.focus()
+
+    def _advance_splash(self) -> None:
+        if self._splash_removed:
+            return
+        self._progress = min(self._progress + 6, 100)
+        self._bar.update(progress=self._progress)
+
+    def remove_splash(self) -> None:
+        if self._splash_removed:
+            return
+        self._splash_removed = True
+        self._splash_timer.stop()
+        overlay = self.query_one("#splash-overlay", Container)
+        if overlay.is_mounted:
+            overlay.remove()
 
 
 class HelpScreen(ModalScreen):
@@ -89,8 +104,8 @@ class ConfirmScreen(ModalScreen[bool]):
     BINDINGS = [Binding("escape", "dismiss", "")]
 
     def __init__(self, modules: list[str]) -> None:
-        self.modules = modules
         super().__init__()
+        self.modules = modules
 
     def compose(self) -> ComposeResult:
         with Container(id="confirm"):
@@ -115,11 +130,11 @@ class RunScreen(ModalScreen[list[str]]):
         title: str,
         cmd_for_module: Callable[[Module], list[str]],
     ) -> None:
+        super().__init__()
         self.modules = modules
         self.title = title
         self.cmd_for_module = cmd_for_module
         self.failed: list[str] = []
-        super().__init__()
 
     def compose(self) -> ComposeResult:
         with Container(id="install"):

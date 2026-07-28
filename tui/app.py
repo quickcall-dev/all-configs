@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 import shutil
 import subprocess
 import sys
 import tomllib
+from dataclasses import replace
 from pathlib import Path
 
 from rich.text import Text
@@ -25,32 +27,82 @@ from tui.widgets import ModuleTable
 PLATFORM = "mac" if sys.platform == "darwin" else "linux"
 
 
-def _is_installed(package: str) -> bool:
+def _brew_installed() -> tuple[set[str], set[str]] | None:
+    """Return cached sets of installed brew formulae and casks."""
+    if PLATFORM != "mac" or not shutil.which("brew"):
+        return None
+    formulae: set[str] = set()
+    casks: set[str] = set()
+    for flag, target in ("--formula", formulae), ("--cask", casks):
+        result = subprocess.run(
+            ["brew", "list", flag],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode == 0:
+            target.update(line.strip() for line in result.stdout.splitlines() if line.strip())
+    return formulae, casks
+
+
+def _app_candidates(name: str) -> list[str]:
+    """Generate candidate macOS app names from a module/package name."""
+    base = name.replace("-", " ").replace("_", " ")
+    candidates = {
+        name,
+        name.lower(),
+        name.capitalize(),
+        base,
+        base.title(),
+        base.replace(" ", ""),
+        base.title().replace(" ", ""),
+    }
+    return list(candidates)
+
+
+def _app_bundle_installed(name: str, package: str | None) -> bool:
+    """Check if a macOS app bundle matching the name/package is installed."""
+    if PLATFORM != "mac":
+        return False
+    app_dirs = [Path("/Applications"), Path.home() / "Applications"]
+    names = [name]
+    if package:
+        names.append(package)
+    candidates: set[str] = set()
+    for n in names:
+        candidates.update(_app_candidates(n))
+    for app_dir in app_dirs:
+        if not app_dir.exists():
+            continue
+        # First try exact candidate names
+        for cand in candidates:
+            if (app_dir / f"{cand}.app").is_dir():
+                return True
+        # Fallback: substring match against any installed app name
+        for app in app_dir.glob("*.app"):
+            stem = app.stem.lower()
+            if name.lower() in stem or (package and package.lower() in stem):
+                return True
+    return False
+
+
+def _is_installed(package: str, brew_sets: tuple[set[str], set[str]] | None, name: str) -> bool:
     """Check whether a package is installed on the current platform."""
     if shutil.which(package):
         return True
-    if PLATFORM == "mac" and shutil.which("brew"):
-        for flag in ("--cask", ""):
-            if flag:
-                result = subprocess.run(
-                    ["brew", "list", flag, package],
-                    capture_output=True,
-                    check=False,
-                )
-            else:
-                result = subprocess.run(
-                    ["brew", "list", package],
-                    capture_output=True,
-                    check=False,
-                )
-            if result.returncode == 0:
-                return True
+    if brew_sets:
+        formulae, casks = brew_sets
+        if package in formulae or package in casks:
+            return True
+    if _app_bundle_installed(name, package):
+        return True
     return False
 
 
 def load_modules(root: Path) -> list[Module]:
     """Discover modules from module.toml files for the current platform."""
     modules: list[Module] = []
+    brew_sets = _brew_installed()
     for toml_path in root.glob("*/module.toml"):
         with open(toml_path, "rb") as f:
             data = tomllib.load(f)
@@ -60,7 +112,7 @@ def load_modules(root: Path) -> list[Module]:
         if PLATFORM not in platforms:
             continue
         package = data.get("package", name)
-        installed = _is_installed(package)
+        installed = _is_installed(package, brew_sets, name)
         modules.append(
             Module(
                 name=name,
@@ -99,6 +151,7 @@ class AllConfigsApp(App):
         self.selected: set[str] = set()
         self.filter_text: str = ""
         self.failed_modules: list[str] = []
+        self.modules_loaded = False
 
     def _typing_in_search(self) -> bool:
         return isinstance(self.focused, Input)
@@ -107,10 +160,19 @@ class AllConfigsApp(App):
         return isinstance(self.screen, MainScreen)
 
     def on_mount(self) -> None:
-        self.modules = load_modules(self.root)
+        self.modules_loaded = False
+        self.push_screen(MainScreen())
+        asyncio.create_task(self._load_modules_async())
+
+    async def _load_modules_async(self) -> None:
+        self.modules = await asyncio.to_thread(load_modules, self.root)
         self.modules.sort(key=lambda m: m.name)
         self.visible_modules = self.modules[:]
-        self.push_screen(MainScreen())
+        self.modules_loaded = True
+        if isinstance(self.screen, MainScreen):
+            self.refresh_table()
+            self.update_footer()
+            self.screen.remove_splash()
 
     def on_key(self, event: events.Key) -> None:
         if event.key == "down" and self._on_main_screen() and self._typing_in_search():
@@ -229,6 +291,9 @@ class AllConfigsApp(App):
     def action_install(self) -> None:
         if not self._on_main_screen() or self._typing_in_search() or not self.selected:
             return
+        self._install_selected()
+
+    def _install_selected(self) -> None:
         to_install = [m for m in self._selected_modules() if not m.installed]
         already = [m.name for m in self._selected_modules() if m.installed]
         if not to_install:
@@ -268,7 +333,7 @@ class AllConfigsApp(App):
             if module.name in self.selected and module.name not in failed:
                 self.modules = [
                     *self.modules[:i],
-                    module.replace(installed=True),
+                    replace(module, installed=True),
                     *self.modules[i + 1 :],
                 ]
         self.selected.clear()
@@ -310,7 +375,7 @@ class AllConfigsApp(App):
             if module.name in self.selected and module.name not in failed:
                 self.modules = [
                     *self.modules[:i],
-                    module.replace(installed=False),
+                    replace(module, installed=False),
                     *self.modules[i + 1 :],
                 ]
         self.selected.clear()

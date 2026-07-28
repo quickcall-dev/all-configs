@@ -1,0 +1,9 @@
+{
+    "description": "Remap Fn key to Left Control (built-in keyboard)",
+    "simple_modifications": [
+        {
+            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+            "to": [{ "key_code": "left_control" }]
+        }
+    ]
+}

@@ -121,3 +121,7 @@ bind -T copy-mode-vi C-h select-pane -L
 bind -T copy-mode-vi C-j select-pane -D
 bind -T copy-mode-vi C-k select-pane -U
 bind -T copy-mode-vi C-l select-pane -R
+
+# ─── Override reload for Linux compatibility ────────────────────────────────
+unbind r
+bind r source-file ~/.tmux.conf \; display "tmux.conf reloaded"

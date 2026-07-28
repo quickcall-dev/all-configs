@@ -1,0 +1,10 @@
+{
+    "description": "Escape to Left Mouse Click",
+    "manipulators": [
+        {
+            "from": { "key_code": "esc" },
+            "to": [{ "pointing_button": "button1" }],
+            "type": "basic"
+        }
+    ]
+}

@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 from textual import events
+from textual.binding import Binding
 from textual.widgets import DataTable, Input
 
 
 class ModuleTable(DataTable):
     """Module list that toggles selection with space and moves focus up to search."""
+
+    BINDINGS = [
+        Binding("enter", "install", "Install"),
+    ]
 
     def on_mount(self) -> None:
         self.add_column("", key="selected", width=3)
@@ -21,3 +26,7 @@ class ModuleTable(DataTable):
         elif event.key == "up" and self.cursor_row == 0:
             self.app.screen.query_one("#search", Input).focus()
             event.stop()
+
+    def action_install(self) -> None:
+        """Trigger install from the module table."""
+        self.app.action_install()

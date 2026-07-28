@@ -2,25 +2,136 @@
 
 Local Karabiner-Elements config for this repo.
 
-## Shortcuts
+## Install
 
-Caps Lock acts as super key.
+```bash
+./karabiner/install.sh
+```
 
-App launchers:
-- `Caps+b` Brave Browser
-- `Caps+d` Zed
-- `Caps+f` Finder
-- `Caps+g` Google Chrome
-- `Caps+m` WhatsApp desktop
-- `Caps+o` Obsidian
-- `Caps+s` Slack
-- `Caps+t` Ghostty
-- `Caps+w` WhatsApp Web
+This syncs the `karabiner/` directory to `~/.config/karabiner/karabiner_scripts/` and installs `karabiner.json` to `~/.config/karabiner/karabiner.json`.
 
-Other mappings:
-- `Caps+l` clears terminal in supported terminal apps
-- `Ctrl` alone -> `Esc`
-- `Ctrl/Option/Cmd` with `h/j/k/l` for nav remaps
+---
+
+## Keymap
+
+### CAPS LOCK REMAPPING
+
+| From | To | Description |
+|------|-----|-------------|
+| `Caps Lock` | `Ctrl+Shift+Option+Cmd` (Super) | Caps Lock becomes a hyper/super key |
+
+### APPLICATION SHORTCUTS
+
+| Shortcut | Action |
+|----------|--------|
+| `Caps + B` | Open/switch to **Brave Browser** |
+| `Caps + C` | Open/switch to **Claude** |
+| `Caps + D` | Open/switch to **Zed** |
+| `Caps + F` | Open/switch to **Finder** |
+| `Caps + G` | Open/switch to **Google Chrome** |
+| `Caps + L` | Clear terminal (sends `Ctrl + L`) |
+| `Caps + M` | Open/switch to **WhatsApp** |
+| `Caps + N` | Open/switch to **Presentify** |
+| `Caps + O` | Open/switch to **Obsidian** |
+| `Caps + S` | Open/switch to **Slack** |
+| `Caps + T` | Open/switch to **Ghostty** |
+| `Caps + W` | Open/switch to **WhatsApp Web** |
+
+### FN KEY REMAPPING
+
+| From | To | Description |
+|------|-----|-------------|
+| `Fn` (built-in keyboard) | `Left Control` | Fn key acts as Left Control |
+
+### CONTROL KEY BEHAVIOR
+
+| From | To | Description |
+|------|-----|-------------|
+| `Left Control` (pressed alone) | `Escape` | Control becomes Escape when tapped |
+| `Left Control` (with other keys) | `Control` | Normal Control function when held |
+| `Right Control` (pressed alone) | `Escape` | Control becomes Escape when tapped |
+| `Right Control` (with other keys) | `Control` | Normal Control function when held |
+
+### OPTION/COMMAND SWAP (Keychron only)
+
+| From | To |
+|------|-----|
+| `Left Option` | `Left Command` |
+| `Left Command` | `Left Option` |
+| `Right Option` | `Right Command` |
+| `Right Command` | `Right Option` |
+
+### VIM-STYLE NAVIGATION (HJKL)
+
+#### Basic Navigation
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + H` | Left Arrow |
+| `Ctrl + J` | Down Arrow |
+| `Ctrl + K` | Up Arrow |
+| `Ctrl + L` | Right Arrow |
+
+#### Word-Level Movement
+
+| Shortcut | Action |
+|----------|--------|
+| `Option + H` | Move left by word |
+| `Option + J` | Move down by word |
+| `Option + K` | Move up by word |
+| `Option + L` | Move right by word |
+
+#### Line-Level Movement
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + Cmd + H` | Move to line start |
+| `Ctrl + Cmd + J` | Move to document end |
+| `Ctrl + Cmd + K` | Move to document start |
+| `Ctrl + Cmd + L` | Move to line end |
+
+#### Selection (Basic)
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + Shift + H` | Select left |
+| `Ctrl + Shift + J` | Select down |
+| `Ctrl + Shift + K` | Select up |
+| `Ctrl + Shift + L` | Select right |
+
+#### Selection (Word-Level)
+
+| Shortcut | Action |
+|----------|--------|
+| `Option + Shift + H` | Select word left |
+| `Option + Shift + J` | Select word down |
+| `Option + Shift + K` | Select word up |
+| `Option + Shift + L` | Select word right |
+
+#### Selection (Line-Level)
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + Cmd + Shift + H` | Select to line start |
+| `Ctrl + Cmd + Shift + J` | Select to document end |
+| `Ctrl + Cmd + Shift + K` | Select to document start |
+| `Ctrl + Cmd + Shift + L` | Select to document end |
+
+### DELETE KEY MAPPINGS
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl + D` | Forward delete (single character) |
+
+### MOUSE SHORTCUTS
+
+| From | To | Description |
+|------|-----|-------------|
+| `Right Shift` (pressed alone) | Right Mouse Click | Quick right-click |
+| `Right Shift` (with other keys) | `Shift` | Normal Shift function |
+| `Escape` | Left Mouse Click | |
+
+---
 
 ## Troubleshooting: Keychron K3 Pro modifier weirdness
 
@@ -45,10 +156,18 @@ If this recurs:
 
 Do not assume Karabiner config is wrong until EventViewer, `hidutil`, and macOS modifier settings are checked.
 
-## Install
+---
 
-```bash
-./karabiner/install.sh
-```
+## Key Symbols Reference
 
-Installer now syncs this repo's `karabiner/` dir into `~/.config/karabiner/karabiner_scripts/` and installs `karabiner/karabiner.json` to `~/.config/karabiner/karabiner.json`.
+| Symbol | Key |
+|--------|-----|
+| `⌘` | Command |
+| `⌃` | Control |
+| `⌥` | Option/Alt |
+| `⇧` | Shift |
+| `⇪` | Caps Lock |
+| `⎋` | Escape |
+| `⌦` | Delete (Forward) |
+| `⌫` | Delete (Backward) |
+| `←` `→` `↑` `↓` | Arrow Keys |
