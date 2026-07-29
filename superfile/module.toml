@@ -1,0 +1,4 @@
+name = "superfile"
+description = "superfile TUI file manager + vim-style config, zoxide jump"
+platforms = ["mac", "linux"]
+package = "superfile"

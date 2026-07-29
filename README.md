@@ -55,6 +55,7 @@ Keys inside the TUI:
 | **keycastr**   | Installs KeyCastr via Homebrew |
 | **presentify** | Installs Presentify from the Mac App Store |
 | **statusline** | Status bar + turn counter for Claude Code |
+| **superfile** | superfile (spf) TUI file manager + vim-style config, zoxide jump, cheat sheet |
 | **tmux** | tmux config, TPM, vim nav, clipboard |
 | **uv** | Astral uv — fast Python package and project manager |
 | **vscode** | VS Code user settings, keybindings, and tasks |
