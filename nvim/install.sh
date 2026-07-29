@@ -46,7 +46,7 @@ fi
 
 # fuzzy finder + search tools (picker deps: fzf-lua/telescope, grep, file finding)
 step "Ensuring search tools"
-for tool in fzf fd ripgrep; do
+for tool in fzf fd ripgrep imagemagick; do
     if pkg_check "$tool"; then
         ok "$tool present"
     else
