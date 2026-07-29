@@ -44,6 +44,16 @@ else
     ok "nvim ${D}$(nvim --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+[^ ]*' | head -1)${R}"
 fi
 
+# fuzzy finder + search tools (picker deps: fzf-lua/telescope, grep, file finding)
+step "Ensuring search tools"
+for tool in fzf fd ripgrep; do
+    if pkg_check "$tool"; then
+        ok "$tool present"
+    else
+        pkg_install "$tool" && ok "$tool installed" || warn "$tool install failed"
+    fi
+done
+
 # tree-sitter
 if ! command -v tree-sitter &>/dev/null; then
     if [[ "$PLATFORM" == "mac" ]]; then
