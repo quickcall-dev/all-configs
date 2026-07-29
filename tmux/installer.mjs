@@ -76,6 +76,7 @@ if (has('scrollback')) lines.push('set -g history-limit 100000', '');
 if (has('colors')) lines.push('set -g default-terminal "tmux-256color"', 'set -ga terminal-overrides ",xterm-256color:Tc"', '');
 if (has('escape')) lines.push('set -sg escape-time 0', '');
 if (has('mouse')) lines.push('set -g mouse on', '');
+lines.push('# kitty graphics passthrough — inline images in nvim (snacks.image)', 'set -gq allow-passthrough on', '');
 
 if (has('splits')) {
     lines.push(
