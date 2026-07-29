@@ -40,6 +40,14 @@ cp "$SCRIPT_DIR/config.toml" "$SPF_DIR/config.toml"
 cp "$SCRIPT_DIR/hotkeys.toml" "$SPF_DIR/hotkeys.toml"
 ok "config + hotkeys ${D}→ $SPF_DIR${R}"
 
+# bat — syntax-highlighted file previews (code_previewer = "bat" in config)
+if ! command -v bat &> /dev/null; then
+    step "Installing bat (preview highlighting)"
+    pkg_install bat || warn "bat install failed — previews fall back to builtin"
+else
+    ok "bat present"
+fi
+
 # zoxide integration (optional but enabled in config)
 if ! command -v zoxide &> /dev/null; then
     warn "zoxide not found — 'z' jump disabled until installed (run: ./install.sh zoxide)"
