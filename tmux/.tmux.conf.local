@@ -51,7 +51,7 @@ tmux_conf_theme_right_separator_main=""
 tmux_conf_theme_right_separator_sub="|"
 
 tmux_conf_theme_status_left=" #S #{window_index}:#{pane_index} "
-tmux_conf_theme_status_right=" #{prefix}#{synchronized} | #{hostname} "
+tmux_conf_theme_status_right=" #{prefix}#{synchronized} | #{pane_current_path} | #{hostname} "
 
 # -- clipboard -----------------------------------------------------------------
 
