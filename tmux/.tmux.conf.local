@@ -51,7 +51,7 @@ tmux_conf_theme_right_separator_main=""
 tmux_conf_theme_right_separator_sub="|"
 
 tmux_conf_theme_status_left=" #S #{window_index}:#{pane_index} "
-tmux_conf_theme_status_right=" #{prefix}#{synchronized} | #{pane_current_path} | #{hostname} "
+tmux_conf_theme_status_right=" #{prefix}#{synchronized} | #{hostname} "
 
 # -- clipboard -----------------------------------------------------------------
 
@@ -121,6 +121,16 @@ bind -T copy-mode-vi C-h select-pane -L
 bind -T copy-mode-vi C-j select-pane -D
 bind -T copy-mode-vi C-k select-pane -U
 bind -T copy-mode-vi C-l select-pane -R
+
+# ─── Mouse: click session block → tree views ────────────────────────────────
+# Left-click status-left  = prefix+s (session tree)
+# Right-click status-left = prefix+w (window tree)
+bind -T root MouseDown1StatusLeft choose-tree -Zs
+bind -T root MouseDown3StatusLeft choose-tree -Zw
+
+# ─── Second status line: pane path (keeps tabs line clean) ──────────────────
+set -g status 2
+set -g status-format[1] "#[bg=#f4f2f0,fg=#7a7888,align=centre] #{pane_current_path} "
 
 # ─── Override reload for Linux compatibility ────────────────────────────────
 unbind r
