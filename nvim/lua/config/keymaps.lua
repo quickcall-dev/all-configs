@@ -4,5 +4,7 @@
 
 -- Yank absolute path of current file to system clipboard
 vim.keymap.set("n", "<leader>yp", function()
-  vim.fn.setreg("+", vim.fn.expand("%:p"))
+  local path = vim.fn.expand("%:p")
+  vim.fn.setreg("+", path)
+  vim.notify("Yanked: " .. path, vim.log.levels.INFO, { title = "yank path" })
 end, { desc = "Yank absolute path" })
