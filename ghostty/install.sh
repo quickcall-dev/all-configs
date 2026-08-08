@@ -18,7 +18,12 @@ if [[ "$PLATFORM" == "mac" ]]; then
         ok "ghostty installed"
     fi
 else
-    warn "Linux: install ghostty manually from https://ghostty.org/download"
+    warn "Linux: ghostty binary not available via package manager"
+    step "Installing ghostty terminfo for xterm-ghostty"
+    ensure_cmd tic ncurses-bin
+    mkdir -p "$HOME/.terminfo"
+    tic -x -o "$HOME/.terminfo" "$SCRIPT_DIR/xterm-ghostty.terminfo"
+    ok "ghostty terminfo installed to ~/.terminfo"
 fi
 
 # ─── Config ───
