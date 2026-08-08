@@ -49,7 +49,7 @@ else
   for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
     if ! grep -q "export PATH=\"$INSTALL_DIR:\$PATH\"" "$rc" 2>/dev/null; then
-      printf n# uvnexport PATH=%s:/Users/sagar/.pi/agent/bin:/Users/sagar/.bun/bin:/Users/sagar/.railway/bin:/Users/sagar/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/homebrew/bin:/Applications/Ghostty.app/Contents/MacOSn "$INSTALL_DIR" >> "$rc"
+      printf '\n# uv\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "$rc"
       ok "added $INSTALL_DIR to PATH in $(basename "$rc")"
     fi
   done

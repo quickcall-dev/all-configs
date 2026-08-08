@@ -32,7 +32,7 @@ step "Enabling zoxide in shell"
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
     if ! grep -Fq "zoxide init" "$rc" 2>/dev/null; then
-        shell=$(basename "$rc" | sed 's/^\.//')
+        shell=$(basename "$rc" | sed -E 's/^\.//; s/rc$//')
         printf '# zoxide — smarter cd\nif command -v zoxide >/dev/null 2>&1; then\n    eval "$(zoxide init %s)"\nfi\n' "$shell" >> "$rc"
         ok "zoxide enabled in $(basename "$rc")"
     else
