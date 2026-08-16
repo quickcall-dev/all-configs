@@ -36,6 +36,8 @@ copy-on-select = clipboard
 # Send Option as Alt so Meta keybindings work in tmux
 macos-option-as-alt = true
 
+# Forward palette shortcuts to tmux
+keybind = cmd+p=text:\x1bp
 # Forward Alt-Backspace to tmux/pi instead of handling it locally
 keybind = alt+backspace=text:\x1b\x7f
 
