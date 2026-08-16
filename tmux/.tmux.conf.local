@@ -59,6 +59,10 @@ tmux_conf_copy_to_os_clipboard=false
 
 # -- user customizations -------------------------------------------------------
 
+# Command palette for tmux. Trigger with Option+p (M-p).
+set -g @plugin 'eduwass/tmux-palette'
+set -g @palette-key 'M-p'
+
 set -g history-limit 100000
 set -g mouse on
 set -sg escape-time 10
