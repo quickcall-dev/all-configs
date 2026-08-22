@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -41,13 +41,19 @@ if [[ -s "/opt/nvm/nvm.sh" ]]; then
     exit 0
 fi
 
-# Fallback to system package manager
+# Fallback install path
 if command -v node &>/dev/null; then
+    if [[ "$PLATFORM" == "linux" ]] && ! node -e 'const [maj,min,patch]=process.versions.node.split(".").map(Number); process.exit(maj > 22 || (maj === 22 && (min > 19 || (min === 19 && patch >= 0))) ? 0 : 1)'; then
+        warn "node $(node --version) too old for Pi — upgrading to Node 24"
+        curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+    fi
     ok "node ${D}$(node --version) → $(command -v node)${R}"
 else
     warn "node not found — installing"
     if [[ "$PLATFORM" == "linux" ]]; then
-        pkg_install npm
+        curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+        sudo apt-get install -y nodejs
     else
         pkg_install node
     fi

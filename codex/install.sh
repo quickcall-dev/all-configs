@@ -7,11 +7,6 @@ source "$ROOT_DIR/lib/common.sh"
 
 step "Installing Codex"
 
-if [[ "$PLATFORM" != "mac" ]]; then
-    warn "Codex module currently supports macOS only"
-    exit 0
-fi
-
 if command -v curl &>/dev/null; then
     curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
     ok "Codex installed"

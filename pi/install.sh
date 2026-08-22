@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -27,15 +27,21 @@ done
 
 step "Installing Pi"
 
+if command -v node &>/dev/null; then
+  if ! node -e 'const [maj,min,patch]=process.versions.node.split(".").map(Number); process.exit(maj > 22 || (maj === 22 && (min > 19 || (min === 19 && patch >= 0))) ? 0 : 1)'; then
+    warn "node $(node --version) too old for Pi — installing supported Node first"
+    bash "$ROOT_DIR/node/install.sh"
+  fi
+else
+  warn "node not found — installing supported Node first"
+  bash "$ROOT_DIR/node/install.sh"
+fi
+
 if command -v pi &> /dev/null; then
   ok "pi ${D}$(pi --version 2>/dev/null | head -1)${R}"
 else
-  warn "pi not found — installing"
-  if ! command -v npm &>/dev/null; then
-    warn "npm not found — installing node first"
-    bash "$ROOT_DIR/node/install.sh"
-  fi
-  npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+  warn "pi not found — installing via official installer"
+  curl -fsSL https://pi.dev/install.sh | sh
   export PATH="$HOME/.local/bin:$PATH"
   ok "pi installed ${D}$(pi --version 2>/dev/null | head -1)${R}"
 fi

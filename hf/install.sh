@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -49,6 +49,13 @@ step "Installing Hugging Face CLI"
 if command -v hf &> /dev/null; then
   ok "hf ${D}$(hf --version)${R}"
 else
+  if [[ "$PLATFORM" == "linux" ]] && command -v apt-get &>/dev/null; then
+    step "Ensuring Python venv support"
+    sudo apt-get update -qq
+    sudo apt-get install -y -qq python3-venv python3.12-venv || sudo apt-get install -y -qq python3-venv
+    ok "python venv support present"
+  fi
+
   warn "hf not found - installing via hf.co/install.sh"
   curl -LsSf https://hf.co/cli/install.sh | bash
 

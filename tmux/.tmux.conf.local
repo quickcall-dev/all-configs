@@ -80,9 +80,14 @@ set -g extended-keys-format csi-u
 setw -g xterm-keys on
 set -as terminal-overrides ',*:kbs=\177'
 
+# Launch login shells inside tmux so PATH/bootstrap from ~/.profile works in
+# sessions, panes, new windows. Prevents missing user-local tools like bun/fd.
+run-shell 'tmux set-option -g default-shell "${SHELL:-/bin/bash}"'
+run-shell 'tmux set-option -g default-command "exec ${SHELL:-/bin/bash} -l"'
+
 # Editor for programs launched inside tmux, including pi Ctrl+G.
-set-environment -g VISUAL /opt/homebrew/bin/nvim
-set-environment -g EDITOR /opt/homebrew/bin/nvim
+set-environment -g VISUAL nvim
+set-environment -g EDITOR nvim
 
 # Soft pastel copy-mode selection (not harsh)
 set -g copy-mode-match-style "bg=#8fb88a,fg=#5c5a6a"

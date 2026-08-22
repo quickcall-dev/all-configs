@@ -56,10 +56,26 @@ else
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+# Persist ~/.local/bin for future login shells. ~/.bashrc may return early on
+# non-interactive shells, so keep PATH bootstrap in profile-level files too.
+for rc in "$HOME/.profile" "$HOME/.zshrc"; do
+  [[ -f "$rc" ]] || touch "$rc"
+  python3 - "$rc" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text() if path.exists() else ""
+text = text.replace('\n# local user bin\nexport PATH="$HOME/.local/bin:$PATH"\n', '\n')
+if '# local user bin' not in text:
+    text += '\n# local user bin\ncase ":$PATH:" in\n  *":$HOME/.local/bin:"*) ;;\n  *) export PATH="$HOME/.local/bin:$PATH" ;;\nesac\n'
+path.write_text(text)
+PY
+done
+
 step "Bare-minimum install: $GIT_NAME <$GIT_EMAIL>"
 
 # Core tools and utilities first.
-for mod in uv node zoxide ffmpeg ncdu yt-dlp tmux; do
+for mod in uv node bun zoxide ffmpeg ncdu yt-dlp tmux tailscale; do
   step "Installing $mod"
   bash "$ROOT_DIR/$mod/install.sh"
 done

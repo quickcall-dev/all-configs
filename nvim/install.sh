@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -69,19 +69,41 @@ else
     ok "tree-sitter-cli"
 fi
 
-# Install config
-NVIM_DIR="$HOME/.config/nvim"
+# Install config into Neovim's actual stdpath("config"). Snap builds may use
+# /home/$USER/.config even when $HOME differs.
+NVIM_DIR="$(nvim --headless '+lua io.write(vim.fn.stdpath("config"))' +qa 2>/dev/null || true)"
+[[ -n "$NVIM_DIR" ]] || NVIM_DIR="$HOME/.config/nvim"
 mkdir -p "$NVIM_DIR"
 
 backup_file "$NVIM_DIR"
 
 # Copy all files
-rsync -a "$SCRIPT_DIR/" "$NVIM_DIR/" --exclude install.sh --exclude README.md
-ok "nvim config ${D}→ ~/.config/nvim/${R}"
+rsync -a "$SCRIPT_DIR/" "$NVIM_DIR/" \
+  --exclude install.sh \
+  --exclude README.md \
+  --exclude '._*' \
+  --exclude '.DS_Store'
+find "$NVIM_DIR" -name '._*' -delete 2>/dev/null || true
+find "$NVIM_DIR" -name '.DS_Store' -delete 2>/dev/null || true
+ok "nvim config ${D}→ $NVIM_DIR/${R}"
 
 # Install plugins
 step "Installing nvim plugins"
-yes | nvim --headless "+Lazy! restore" +qa && ok "plugins installed" || warn "open nvim manually — plugins will auto-install"
+plugin_log="$(mktemp)"
+if nvim --headless "+Lazy! restore" +qa >"$plugin_log" 2>&1; then
+    if grep -Eq "E492:|Failed to load" "$plugin_log"; then
+        warn "plugin bootstrap hit config errors — open nvim manually"
+        tail -20 "$plugin_log" || true
+    elif grep -q "mason.nvim] Neovim exited while the following packages were installing" "$plugin_log"; then
+        warn "plugins bootstrapped; some Mason packages continue on first interactive open"
+    else
+        ok "plugins installed"
+    fi
+else
+    warn "open nvim manually — plugins will auto-install"
+    tail -20 "$plugin_log" || true
+fi
+rm -f "$plugin_log"
 
 echo ""
 echo -e "  ${GRN}Done!${R} Run ${CYN}nvim${R} to start"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -25,11 +25,18 @@ else
     warn "caveman marketplace add failed or already exists"
 fi
 
-if yes | claude plugin install caveman@caveman; then
+plugin_log="$(mktemp)"
+if yes | claude plugin install caveman@caveman >"$plugin_log" 2>&1; then
     ok "caveman installed"
 else
-    warn "caveman plugin install failed; open Claude Code and run plugin install manually"
+    if grep -q "Validation errors: agents: Invalid input" "$plugin_log"; then
+        warn "caveman plugin skipped — upstream manifest invalid"
+    else
+        warn "caveman plugin install failed; open Claude Code and run plugin install manually"
+        tail -20 "$plugin_log" || true
+    fi
 fi
+rm -f "$plugin_log"
 
 step "Setting caveman ultra defaults"
 

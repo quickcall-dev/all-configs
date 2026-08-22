@@ -8,3 +8,5 @@ tmux/tests/
 this
 .worktrees/
 __pycache__/
+._*
+.DS_Store
