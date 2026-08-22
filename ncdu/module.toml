@@ -1,0 +1,3 @@
+name = "ncdu"
+description = "Interactive disk usage analyzer"
+platforms = ["mac", "linux"]

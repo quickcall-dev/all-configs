@@ -1,0 +1,4 @@
+name = "tailscale"
+description = "Tailscale mesh VPN"
+platforms = ["mac"]
+package = "tailscale"

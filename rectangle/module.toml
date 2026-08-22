@@ -1,0 +1,3 @@
+name = "rectangle"
+description = "Installs Rectangle via Homebrew"
+platforms = ["mac"]

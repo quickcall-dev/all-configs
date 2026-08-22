@@ -1,0 +1,3 @@
+name = "pi"
+description = "Pi coding agent CLI, settings, and package extensions"
+platforms = ["mac", "linux"]

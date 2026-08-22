@@ -1,0 +1,3 @@
+name = "betterdisplay"
+description = "Installs BetterDisplay via Homebrew"
+platforms = ["mac"]

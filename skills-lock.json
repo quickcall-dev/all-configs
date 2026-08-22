@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "autoresearch-fleet": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "90bea585c9c10daa4413eaa9d92cc03d79bd5234de38f18e5ad17690c6ae4f08"
+    },
+    "dag-fleet": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "dca7b4a25e07fbe593316cb191bf3fa438f5ef4ef533b8f1cdbaf6fbc520677e"
+    },
+    "doc": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "c45501527cb9b9912bb3b47a0c934543aae66e198f02ac738bc562e77399a577"
+    },
+    "fleet-plan": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "0820936ba653b1670857bebb13d2635649d9f698014d8f3b095a12c2c47ffe26"
+    },
+    "iterative-fleet": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "8e097b37fbf5829caf23b8d36abdffdc812451f6d50b13e6e4c127c1961e358d"
+    },
+    "worktree-fleet": {
+      "source": "quickcall-dev/skills",
+      "sourceType": "github",
+      "computedHash": "e8cc337d1e58e77ae9a1eb5b68730063291db6fda2d93fe2131cbc54acd6d3ce"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+name = "caveman"
+description = "caveman Claude Code plugin — ~75% fewer output tokens"
+platforms = ["mac", "linux"]

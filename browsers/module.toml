@@ -1,0 +1,3 @@
+name = "browsers"
+description = "Brave and Google Chrome via Homebrew"
+platforms = ["mac"]

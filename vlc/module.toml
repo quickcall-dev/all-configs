@@ -1,0 +1,3 @@
+name = "vlc"
+description = "Installs VLC via Homebrew"
+platforms = ["mac"]

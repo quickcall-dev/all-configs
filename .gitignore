@@ -1,0 +1,12 @@
+*.cast
+*.log
+node_modules/
+tmux/node_modules/
+tmux/test-logs/
+tmux/test-tmux.sh
+tmux/tests/
+this
+.worktrees/
+__pycache__/
+._*
+.DS_Store

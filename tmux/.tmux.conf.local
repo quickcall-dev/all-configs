@@ -1,0 +1,146 @@
+# Oh my tmux!
+# https://github.com/gpakosz/.tmux
+
+# -- general -------------------------------------------------------------------
+
+tmux_conf_new_session_prompt=false
+tmux_conf_new_session_retain_current_path=false
+tmux_conf_new_window_retain_current_path=true
+tmux_conf_new_window_reconnect_ssh=false
+tmux_conf_new_pane_retain_current_path=true
+tmux_conf_new_pane_reconnect_ssh=false
+
+# -- display -------------------------------------------------------------------
+
+tmux_conf_24b_colour=auto
+
+# -- theming -------------------------------------------------------------------
+
+tmux_conf_theme=enabled
+
+# Pastel palette — soft, muted, no attention-grabbing colors
+tmux_conf_theme_colour_1="#f4f2f0"    # status bg (warm cream)
+tmux_conf_theme_colour_2="#e0dcd8"    # pane border (warm gray)
+tmux_conf_theme_colour_3="#7a7888"    # status text (muted)
+tmux_conf_theme_colour_4="#8fb88a"    # accent (sage)
+tmux_conf_theme_colour_5="#f5d890"    # message/mode bg (pastel yellow)
+tmux_conf_theme_colour_6="#5c5a6a"    # status left fg
+tmux_conf_theme_colour_7="#7a7888"
+tmux_conf_theme_colour_8="#5c5a6a"
+tmux_conf_theme_colour_9="#8fb88a"    # session block bg (sage)
+tmux_conf_theme_colour_10="#8fb88a"
+tmux_conf_theme_colour_11="#b5e3a8"   # pastel green
+tmux_conf_theme_colour_12="#7a7888"   # status right fg
+tmux_conf_theme_colour_13="#5c5a6a"
+tmux_conf_theme_colour_14="#7a7888"
+tmux_conf_theme_colour_15="#f4f2f0"   # status right bg
+tmux_conf_theme_colour_16="#8fb88a"   # hostname block bg (sage)
+tmux_conf_theme_colour_17="#e0dcd8"
+
+# Message/mode — pastel yellow, dark text
+tmux_conf_theme_message_fg="#5c5a6a"
+tmux_conf_theme_message_bg="#f5d890"
+tmux_conf_theme_mode_fg="#5c5a6a"
+tmux_conf_theme_mode_bg="#f5d890"
+
+# -- status line ---------------------------------------------------------------
+
+tmux_conf_theme_left_separator_main=""
+tmux_conf_theme_left_separator_sub="|"
+tmux_conf_theme_right_separator_main=""
+tmux_conf_theme_right_separator_sub="|"
+
+tmux_conf_theme_status_left=" #S #{window_index}:#{pane_index} "
+tmux_conf_theme_status_right=" #{prefix}#{synchronized} | #{hostname} "
+
+# -- clipboard -----------------------------------------------------------------
+
+tmux_conf_copy_to_os_clipboard=false
+
+# -- user customizations -------------------------------------------------------
+
+# Command palette for tmux. Trigger with Option+p (M-p).
+set -g @plugin 'eduwass/tmux-palette'
+set -g @palette-key 'M-p'
+
+set -g history-limit 100000
+set -g mouse on
+set -sg escape-time 10
+
+set -g visual-activity off
+set -g visual-bell off
+set -g visual-silence off
+setw -g monitor-activity off
+set -g bell-action none
+
+set -g status-position top
+set -g extended-keys on
+set -g extended-keys-format csi-u
+
+setw -g xterm-keys on
+set -as terminal-overrides ',*:kbs=\177'
+
+# Launch login shells inside tmux so PATH/bootstrap from ~/.profile works in
+# sessions, panes, new windows. Prevents missing user-local tools like bun/fd.
+run-shell 'tmux set-option -g default-shell "${SHELL:-/bin/bash}"'
+run-shell 'tmux set-option -g default-command "exec ${SHELL:-/bin/bash} -l"'
+
+# Editor for programs launched inside tmux, including pi Ctrl+G.
+set-environment -g VISUAL nvim
+set-environment -g EDITOR nvim
+
+# Soft pastel copy-mode selection (not harsh)
+set -g copy-mode-match-style "bg=#8fb88a,fg=#5c5a6a"
+set -g copy-mode-mark-style "bg=#8fb88a,fg=#5c5a6a"
+
+# ─── Split keys ───────────────────────────────────────────────────────
+unbind -
+unbind _
+bind | split-window -h
+bind _ split-window -v
+
+# ─── Swap panes ───────────────────────────────────────────────────────
+unbind >
+unbind <
+bind j swap-pane -D
+bind k swap-pane -U
+
+# ─── Kill pane / window ───────────────────────────────────────────────
+unbind x
+bind q confirm-before -p "kill pane? (y/n)" kill-pane
+bind Q confirm-before -p "kill window? (y/n)" kill-window
+
+# ─── Copy mode ────────────────────────────────────────────────────────
+set -g mode-keys vi
+unbind Enter
+bind Escape copy-mode
+
+# ─── Maximize pane ────────────────────────────────────────────────────
+unbind +
+bind M run "cut -c3- '#{TMUX_CONF}' | sh -s _maximize_pane '#{session_name}' '#D'"
+
+# ─── vim-tmux-navigator ───────────────────────────────────────────────
+is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"
+bind -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
+bind -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
+bind -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
+bind -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
+
+bind -T copy-mode-vi C-h select-pane -L
+bind -T copy-mode-vi C-j select-pane -D
+bind -T copy-mode-vi C-k select-pane -U
+bind -T copy-mode-vi C-l select-pane -R
+
+# ─── Mouse: click session block → tree views ────────────────────────────────
+# Left-click status-left  = prefix+s (session tree)
+# Right-click status-left = prefix+w (window tree)
+bind -T root MouseDown1StatusLeft choose-tree -Zs
+bind -T root MouseDown3StatusLeft choose-tree -Zw
+
+# ─── Second status line: pane path (keeps tabs line clean) ──────────────────
+set -g status 2
+set -g status-format[1] "#[bg=#f4f2f0,fg=#7a7888,align=centre] #{pane_current_path} "
+
+# ─── Override reload for Linux compatibility ────────────────────────────────
+unbind r
+bind r source-file ~/.tmux.conf \; display "tmux.conf reloaded"

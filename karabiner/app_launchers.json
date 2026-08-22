@@ -1,0 +1,236 @@
+{
+    "description": "Caps Lock + b/c/d/f/g/l/m/n/o/s/t/w to open or switch to applications",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "g",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Google Chrome'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "b",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Brave Browser'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "d",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Zed'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "s",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Slack'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "l",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "key_code": "l",
+                    "modifiers": [
+                        "left_control"
+                    ]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "t",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Ghostty'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "c",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Claude'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "w",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'WhatsApp Web'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "m",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -b 'net.whatsapp.WhatsApp'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "o",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Obsidian'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Finder'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "n",
+                "modifiers": {
+                    "mandatory": [
+                        "left_control",
+                        "left_shift",
+                        "left_option",
+                        "left_command"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Presentify'"
+                }
+            ],
+            "type": "basic"
+        }
+    ]
+}

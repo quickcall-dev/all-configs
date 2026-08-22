@@ -1,0 +1,3 @@
+name = "fonts"
+description = "Meslo Nerd Font for terminal and editor icons"
+platforms = ["mac", "linux"]

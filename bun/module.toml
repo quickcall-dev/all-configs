@@ -1,0 +1,3 @@
+name = "bun"
+description = "Bun runtime via official installer"
+platforms = ["mac", "linux"]

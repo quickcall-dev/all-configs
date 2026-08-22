@@ -1,0 +1,3 @@
+name = "aldente"
+description = "Installs AlDente via Homebrew"
+platforms = ["mac"]
