@@ -25,7 +25,7 @@ This syncs the `karabiner/` directory to `~/.config/karabiner/karabiner_scripts/
 | Shortcut | Action |
 |----------|--------|
 | `Caps + B` | Open/switch to **Brave Browser** |
-| `Caps + C` | Open/switch to **Claude** |
+| `Caps + C` | Open/switch to **Visual Studio Code** |
 | `Caps + D` | Open/switch to **Zed** |
 | `Caps + F` | Open/switch to **Finder** |
 | `Caps + G` | Open/switch to **Google Chrome** |
@@ -135,26 +135,203 @@ This syncs the `karabiner/` directory to `~/.config/karabiner/karabiner_scripts/
 
 ## Troubleshooting: Keychron K3 Pro modifier weirdness
 
-Recurring issue: left Option and left Command can appear swapped, or Caps Lock can stop behaving like super. This may look like a Karabiner config problem, but evidence from 2026-07-17 showed no Karabiner swap, no `hidutil` mapping, and no macOS modifier mapping.
+Incident date: 2026-10-01.
 
-What happened:
-- Caps Lock briefly registered as real `caps_lock` instead of the super key.
-- Left Option and left Command appeared swapped on the Keychron K3 Pro.
-- Karabiner config was loaded and correct.
-- Mac/Windows switch testing did not immediately fix it.
-- Visiting `https://usevia.app`, authorizing the Keychron K3 Pro, and testing the keys made the issue suddenly resolve.
+Symptom:
+- Caps Lock stopped behaving like super.
+- Physical left Option emitted `left_command`.
+- Physical left Command emitted `left_option`.
+- Physical right Command emitted `right_option`.
+- The MacBook built-in keyboard still behaved correctly.
 
-Likely cause: Keychron firmware or layer state gets stuck or stale. VIA connection appears to refresh or resync the keyboard layer state. Root cause is not fully confirmed.
+Root cause found:
+- After a Keychron reset/re-pair, macOS/Karabiner no longer saw the keyboard as the old K3 Pro identity:
+  - old: `vendor_id: 13364`, `product_id: 560`, product `Keychron K3 Pro`
+  - new: `vendor_id: 13364`, `product_id: 640`, product `Keychron Bluetooth Keyboard`
+- The new `640` identity reports as both `is_keyboard: true` and `is_pointing_device: true`.
+- The config initially added `product_id: 640` with only `is_keyboard: true`, so Karabiner did not fully match that device identity. Caps-to-super then came through as raw `caps_lock`.
+- After adding `is_pointing_device: true`, Caps-to-super worked again.
+- EventViewer then proved the current Keychron Bluetooth profile itself was emitting swapped modifier codes, so the final fix was a device-specific `simple_modifications` correction scoped only to `vendor_id: 13364`, `product_id: 640`.
 
-If this recurs:
-1. Open `https://usevia.app`.
-2. Authorize and connect the Keychron K3 Pro.
-3. Open Configure -> Keymap.
-4. Check Mac layer bottom row near Space. Expected order: `LCTL LOPT LCMD Space` or `LCTL LALT LGUI Space`.
-5. Test physical Option and Command in Karabiner EventViewer.
-6. If needed, toggle the keyboard Mac/Windows switch once and return to Mac.
+Do not add global Command/Option swaps. They will break the built-in MacBook keyboard.
 
-Do not assume Karabiner config is wrong until EventViewer, `hidutil`, and macOS modifier settings are checked.
+Agent handoff: exact debug path used:
+
+1. Confirm whether this is a Karabiner config change, a macOS native mapping, or keyboard firmware/layer output.
+
+   ```bash
+   hidutil property --get UserKeyMapping
+   defaults read -g com.apple.keyboard.modifiermapping 2>/dev/null
+   jq '.profiles[0].complex_modifications.rules[] | select((.description|ascii_downcase|contains("swap")) or ((.manipulators // []) | tostring | test("left_option|left_command|right_option|right_command")))' ~/.config/karabiner/karabiner.json
+   ```
+
+   Evidence from the incident:
+   - `hidutil property --get UserKeyMapping` returned `(null)`.
+   - `defaults read -g com.apple.keyboard.modifiermapping` returned no mapping.
+   - The live config did not have an enabled complex Command/Option swap rule.
+
+2. Compare what macOS sees with what Karabiner sees.
+
+   ```bash
+   hidutil list | rg -i 'keychron|karabiner|internal keyboard'
+   /Library/Application\ Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli --list-connected-devices
+   ```
+
+   Evidence from the incident:
+   - `hidutil` showed the external keyboard as `0x3434 0x280 ... Keychron Bluetooth Keyboard`.
+   - Karabiner CLI showed:
+
+     ```json
+     {
+       "device_identifiers": {
+         "is_keyboard": true,
+         "is_pointing_device": true,
+         "product_id": 640,
+         "vendor_id": 13364
+       },
+       "product": "Keychron Bluetooth Keyboard",
+       "transport": "Bluetooth"
+     }
+     ```
+
+   Key realization: the config knew the old Keychron identity `product_id: 560`, but the connected keyboard was now `product_id: 640`. The first attempted `640` entry missed `is_pointing_device: true`, so it still did not match the actual Karabiner device identity correctly.
+
+3. Verify the active profile and whether the Caps rule exists there.
+
+   ```bash
+   /Library/Application\ Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli --show-current-profile-name
+   jq '.profiles[] | {name, selected, devices: [.devices[] | select(.identifiers.vendor_id==13364)], caps_rule: [.complex_modifications.rules[] | select(.description=="Remap caps_lock to super") | .description]}' ~/.config/karabiner/karabiner.json
+   tail -n 20 ~/.local/share/karabiner/log/console_user_server.log
+   ```
+
+   Evidence from the incident:
+   - Active profile was `Default profile`.
+   - `Remap caps_lock to super` was present.
+   - Karabiner reloaded the file successfully after edits, for example `core_configuration is updated`.
+
+4. Use Karabiner-EventViewer as the source of truth for what is happening after Karabiner processing.
+
+   Probe order used:
+   - Clear EventViewer.
+   - Press physical left Option down/up.
+   - Press physical left Command down/up.
+   - Press physical right Command down/up.
+   - Press physical Caps Lock down/up.
+   - Press physical `a` down/up.
+
+   First failing trace showed:
+   - physical left Option -> `left_command`
+   - physical left Command -> `left_option`
+   - physical right Command -> `right_option`
+   - physical Caps -> raw `caps_lock`
+   - `a` -> `a`
+
+   Interpretation:
+   - `a` proved EventViewer was receiving normal keyboard events.
+   - raw `caps_lock` proved Karabiner was not applying the Caps-to-super rule to that current device identity.
+   - swapped modifier key codes proved the Keychron's current Bluetooth profile/layer was emitting swapped modifiers before the final correction.
+
+5. Apply the smallest config fix and test after each step.
+
+   First fix:
+   - Add a `product_id: 640`, `vendor_id: 13364` device entry.
+   - Include `is_pointing_device: true` because Karabiner reports the current Bluetooth identity as both keyboard and pointing device.
+
+   Result:
+   - Caps changed from raw `caps_lock` to the expected super chord:
+     `left_command`, `left_option`, `left_shift`, `left_control`.
+
+   Second fix:
+   - Add `simple_modifications` only on the `640` Keychron device entry to correct the emitted swapped modifiers.
+
+   Result:
+   - physical left Option -> `left_option`
+   - physical left Command -> `left_command`
+   - physical right Command -> `right_command`
+   - Caps -> super chord
+
+6. Preserve the debugging boundary.
+
+   Do not:
+   - add or re-enable the old global/complex swap rule
+   - add a vendor-only swap condition such as only `{ "vendor_id": 13364 }`
+   - change the MacBook built-in keyboard settings
+   - assume firmware is the first fix
+
+   Do:
+   - match the exact connected Keychron identity from Karabiner CLI
+   - keep corrections under that exact device's `simple_modifications`
+   - retest with EventViewer after each change
+   - keep the repo config, `~/.config/karabiner/karabiner.json`, and `~/.config/karabiner/karabiner_scripts/karabiner.json` in sync
+
+Current expected Keychron device entries:
+
+```json
+{
+  "identifiers": {
+    "is_keyboard": true,
+    "is_pointing_device": true,
+    "product_id": 560,
+    "vendor_id": 13364
+  },
+  "ignore": false,
+  "treat_as_built_in_keyboard": true
+}
+```
+
+```json
+{
+  "identifiers": {
+    "is_keyboard": true,
+    "product_id": 640,
+    "vendor_id": 13364,
+    "is_pointing_device": true
+  },
+  "ignore": false,
+  "treat_as_built_in_keyboard": true,
+  "simple_modifications": [
+    { "from": { "key_code": "left_command" }, "to": [{ "key_code": "left_option" }] },
+    { "from": { "key_code": "left_option" }, "to": [{ "key_code": "left_command" }] },
+    { "from": { "key_code": "right_option" }, "to": [{ "key_code": "right_command" }] },
+    { "from": { "key_code": "right_command" }, "to": [{ "key_code": "right_option" }] }
+  ]
+}
+```
+
+Fast checks:
+
+```bash
+hidutil list | rg -i 'keychron|karabiner|internal keyboard'
+hidutil property --get UserKeyMapping
+defaults read -g com.apple.keyboard.modifiermapping 2>/dev/null
+/Library/Application\ Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli --list-connected-devices
+```
+
+The Karabiner CLI may need to be run outside restricted shells/sandboxes. If `hidutil` sees the Keychron but Karabiner CLI does not, debug Karabiner service/grabber state before editing JSON.
+
+EventViewer probe order:
+
+1. Clear Karabiner-EventViewer.
+2. Press physical left Option down/up.
+3. Press physical left Command down/up.
+4. Press physical right Command down/up.
+5. Press physical Caps Lock down/up.
+6. Press physical `a` down/up.
+
+Expected healthy output:
+- left Option -> `left_option`
+- left Command -> `left_command`
+- right Command -> `right_command`
+- Caps Lock -> `left_command`, `left_option`, `left_shift`, `left_control`
+- `a` -> `a`
+
+Interpretation:
+- If Caps appears as raw `caps_lock`, Karabiner is not applying the Caps-to-super rule to the current device identity. Check whether the connected Keychron identity has changed, especially `product_id` and `is_pointing_device`.
+- If Option/Command are swapped in EventViewer before correction, the keyboard profile/layer is emitting swapped codes. Fix with a device-specific `simple_modifications` entry for that exact Keychron identity only.
+- If macOS native mappings are non-empty, clear those before blaming Karabiner.
+- If the device flips identity again after reset/re-pair, add the exact new identity instead of changing global rules.
+
+Also check the physical Keychron OS switch and VIA/Keychron Launcher layer if the behavior changes again. Firmware updates are a last step; use the exact firmware for the keyboard model/layout only.
 
 ---
 

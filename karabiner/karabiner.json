@@ -19,68 +19,6 @@
                         ]
                     },
                     {
-                        "description": "Swap left and right Option/Command on Keychron",
-                        "enabled": false,
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "left_option",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [{ "key_code": "left_command" }],
-                                "type": "basic",
-                                "conditions": [
-                                    {
-                                        "type": "device_if",
-                                        "identifiers": [{ "vendor_id": 13364 }]
-                                    }
-                                ]
-                            },
-                            {
-                                "from": {
-                                    "key_code": "left_command",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [{ "key_code": "left_option" }],
-                                "type": "basic",
-                                "conditions": [
-                                    {
-                                        "type": "device_if",
-                                        "identifiers": [{ "vendor_id": 13364 }]
-                                    }
-                                ]
-                            },
-                            {
-                                "from": {
-                                    "key_code": "right_option",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [{ "key_code": "right_command" }],
-                                "type": "basic",
-                                "conditions": [
-                                    {
-                                        "type": "device_if",
-                                        "identifiers": [{ "vendor_id": 13364 }]
-                                    }
-                                ]
-                            },
-                            {
-                                "from": {
-                                    "key_code": "right_command",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [{ "key_code": "right_option" }],
-                                "type": "basic",
-                                "conditions": [
-                                    {
-                                        "type": "device_if",
-                                        "identifiers": [{ "vendor_id": 13364 }]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "description": "Caps Lock + g/b/c/d/f/l/m/n/o/s/t/w to open or switch to applications",
                         "manipulators": [
                             {
@@ -141,7 +79,7 @@
                                     "key_code": "c",
                                     "modifiers": { "mandatory": ["left_control", "left_shift", "left_option", "left_command"] }
                                 },
-                                "to": [{ "shell_command": "open -a 'Claude'" }],
+                                "to": [{ "shell_command": "open -a 'Visual Studio Code'" }],
                                 "type": "basic"
                             },
                             {
@@ -548,6 +486,34 @@
                         {
                             "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
                             "to": [{ "key_code": "left_control" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": true,
+                        "product_id": 640,
+                        "vendor_id": 13364
+                    },
+                    "ignore": false,
+                    "treat_as_built_in_keyboard": true,
+                    "simple_modifications": [
+                        {
+                            "from": { "key_code": "left_command" },
+                            "to": [{ "key_code": "left_option" }]
+                        },
+                        {
+                            "from": { "key_code": "left_option" },
+                            "to": [{ "key_code": "left_command" }]
+                        },
+                        {
+                            "from": { "key_code": "right_option" },
+                            "to": [{ "key_code": "right_command" }]
+                        },
+                        {
+                            "from": { "key_code": "right_command" },
+                            "to": [{ "key_code": "right_option" }]
                         }
                     ]
                 }
