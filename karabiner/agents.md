@@ -1,40 +1,39 @@
-# Agent Context: Karabiner Config Setup
+# Agent Context: Karabiner Config
 
-## Repo Layout
+## Layout
+
+This directory (`./karabiner/` in the `all-configs` dotfiles repo) is the source of truth. It is synced to the live location by `install.sh`:
 
 ```
-~/.config/karabiner/
-├── karabiner.json              # LIVE config — Karabiner-Elements reads this
-└── karabiner_scripts/          # THIS REPO (git)
-    ├── agents.md               # This file
-    ├── app_launchers.json      # Modular: app shortcuts (Caps+G, Caps+B, etc.)
-    ├── vim_arrow_keys.json     # Modular: hjkl navigation
-    ├── remap_caps_lock_shift_super.json
-    ├── rename_caps_lock_to_super.json
-    ├── remap_escape_to_control.json
-    ├── fn_to_control.json
-    ├── custom_delete_mapping.json
-    ├── right_shift_mouse_click.json
-    ├── swap_esc_delete.json
-    ├── karabiner.json            # MERGED config — copied to live config by install.sh
-    ├── install.sh                # Syncs repo → live config
-    └── README.md
+<repo>/karabiner/                     # source of truth (this directory, git)
+└── installed/synced to:
+    ~/.config/karabiner/
+    ├── karabiner.json                # LIVE config — Karabiner-Elements reads this
+    └── karabiner_scripts/            # rsync copy of this directory (install.sh)
 ```
 
-## Key Rules
+## Key rules
 
-1. **Caps Lock = Super** (`left_control + left_shift + left_option + left_command`). All `Caps + <key>` shortcuts use that modifier combo.
+1. **Caps Lock = super** (`left_control + left_shift + left_option + left_command`). All `Caps + <key>` shortcuts use that modifier combo.
 
-2. **Two places need updating** when you change shortcuts:
-   - The **modular file** in this repo (e.g. `app_launchers.json`)
-   - The **live config** at `~/.config/karabiner/karabiner.json`
-   - Optionally also `karabiner_scripts/karabiner.json` (the merged copy in repo)
+2. **Keep all copies in sync** when changing shortcuts:
+   - The modular file here (e.g. `app_launchers.json`)
+   - The merged `karabiner.json` here
+   - `~/.config/karabiner/karabiner.json` (live)
+   - `~/.config/karabiner/karabiner_scripts/` (rsync copy — or rerun `install.sh` to regenerate)
 
-3. **Or just use `install.sh`** — it copies `karabiner_scripts/karabiner.json` → `~/.config/karabiner/karabiner.json` and restarts Karabiner-Elements.
+   Karabiner watches the live config and reloads automatically; check `~/.local/share/karabiner/log/console_user_server.log` for `core_configuration is updated`.
 
-4. **App names vs bundle IDs** — `open -a 'App Name'` sometimes fails (e.g. WhatsApp). Use `open -b 'bundle.id'` as fallback. Get bundle ID via:
+3. **App names vs bundle IDs** — `open -a 'App Name'` sometimes fails (e.g. WhatsApp). Use `open -b 'bundle.id'` as fallback. Get bundle ID via:
    ```bash
    mdls -name kMDItemCFBundleIdentifier /Applications/AppName.app
    ```
 
-5. **Git workflow** — commit and push from `karabiner_scripts/` directory. Remote: `git@github.com:sagarsrc/karabiner_scripts.git`
+4. **Validate JSON** after editing:
+   ```bash
+   jq empty <file>
+   ```
+
+5. **Git** — commit and push from the `all-configs` repo root (`git@github.com:quickcall-dev/all-configs.git`).
+
+6. **Never add global Command/Option swaps** — they break the MacBook built-in keyboard. Keychron corrections are device-scoped only. See `troubleshooting.md` before touching modifier rules.
