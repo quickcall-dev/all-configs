@@ -6,6 +6,12 @@ alias ll='ls -la | grep -v " ._"'
 # reload: re-source shell config
 alias reload='source ~/.bashrc'
 
+# vi/vim -> neovim
+if command -v nvim >/dev/null 2>&1; then
+    alias vi='nvim'
+    alias vim='nvim'
+fi
+
 # ckdir: create a directory (with parents) and cd into it
 ckdir() {
     if [[ $# -eq 0 ]]; then
