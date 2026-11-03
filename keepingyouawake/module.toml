@@ -1,0 +1,3 @@
+name = "keepingyouawake"
+description = "Installs KeepingYouAwake (prevents Mac sleep) via Homebrew"
+platforms = ["mac"]
