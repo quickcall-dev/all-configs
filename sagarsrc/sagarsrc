@@ -1,0 +1,13 @@
+# sagarsrc — personal shell aliases & functions
+
+# ll: detailed listing
+alias ll='ls -la'
+
+# ckdir: create a directory (with parents) and cd into it
+ckdir() {
+    if [[ $# -eq 0 ]]; then
+        echo "usage: ckdir <directory>" >&2
+        return 1
+    fi
+    mkdir -p "$1" && cd "$1"
+}
