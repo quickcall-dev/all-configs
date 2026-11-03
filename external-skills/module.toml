@@ -1,0 +1,3 @@
+name = "external-skills"
+description = "External UI/design skills: hallmark, taste (skills CLI), impeccable (own installer)"
+platforms = ["mac", "linux"]

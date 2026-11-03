@@ -1,3 +1,3 @@
 name = "skills"
-description = "QuickCall Claude Code skills"
+description = "Personal QuickCall skills (doc, markdown-to-pdf, product-ui-kit) for Claude Code, Codex, and Pi"
 platforms = ["mac", "linux"]

@@ -1,4 +1,0 @@
-name = "moshi"
-description = "Moshi remote-login hook (with mosh transport)"
-platforms = ["mac"]
-package = "moshi-hook"
