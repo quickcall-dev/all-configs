@@ -60,5 +60,5 @@ done
 
 echo ""
 echo -e "  ${GRN}Done!${R} Open Ghostty to apply"
-echo -e "  ${D}Theme: catppuccin-macchiato  |  Font: JetBrains Mono 14${R}"
+echo -e "  ${D}Theme: vscode-light  |  Font: MesloLGS Nerd Font Mono 14${R}"
 echo ""
