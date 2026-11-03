@@ -3,7 +3,7 @@ palette = 1=#cd3131
 palette = 2=#107C10
 palette = 3=#949800
 palette = 4=#0451a5
-palette = 5=#bc05bc
+palette = 5=#8250df
 palette = 6=#0598bc
 palette = 7=#555555
 palette = 8=#666666
@@ -11,7 +11,7 @@ palette = 9=#cd3131
 palette = 10=#14CE14
 palette = 11=#b5ba00
 palette = 12=#0451a5
-palette = 13=#bc05bc
+palette = 13=#b083f0
 palette = 14=#0598bc
 palette = 15=#a5a5a5
 background = #f2f4f7
