@@ -49,24 +49,37 @@ step "Ensuring search tools"
 for tool in fzf fd ripgrep imagemagick; do
     if pkg_check "$tool"; then
         ok "$tool present"
+    elif [[ "$PLATFORM" == "mac" ]]; then
+        brew_install_formula "$tool" || warn "$tool install failed"
     else
         pkg_install "$tool" && ok "$tool installed" || warn "$tool install failed"
     fi
 done
 
-# tree-sitter
-if ! command -v tree-sitter &>/dev/null; then
-    if [[ "$PLATFORM" == "mac" ]]; then
-        brew_install_formula tree-sitter
-    elif command -v npm &>/dev/null; then
-        warn "tree-sitter-cli not found — installing"
-        npm install -g tree-sitter-cli
-        ok "tree-sitter-cli installed"
-    else
-        warn "tree-sitter-cli not found (npm not available — skipping)"
-    fi
+# tree-sitter CLI — NOTE: the brew `tree-sitter` formula is library-only (no
+# binary). The CLI ships in the separate `tree-sitter-cli` formula. Verify the
+# actual binary, not the formula.
+if command -v tree-sitter &>/dev/null && tree-sitter --version &>/dev/null; then
+    ok "tree-sitter-cli ${D}$(tree-sitter --version | head -1)${R}"
 else
-    ok "tree-sitter-cli"
+    if [[ "$PLATFORM" == "mac" ]]; then
+        brew_install_formula tree-sitter-cli
+    elif command -v npm &>/dev/null; then
+        npm install -g tree-sitter-cli
+        ok "tree-sitter-cli installed via npm"
+    else
+        warn "tree-sitter-cli not found (no brew/npm — Mason will provide it)"
+    fi
+    command -v tree-sitter &>/dev/null && ok "tree-sitter-cli present" || warn "tree-sitter CLI still missing"
+fi
+
+# ripgrep — functional check, not just presence. fzf-lua/grug-far shell out to
+# rg with these exact flags; catch broken/shimmed binaries early.
+if command -v rg &>/dev/null && echo "rg smoke test" | rg --column --line-number --no-heading --color=never --smart-case "smoke" &>/dev/null; then
+    ok "ripgrep ${D}$(rg --version | head -1)${R}"
+else
+    warn "rg missing or broken — installing ripgrep"
+    pkg_install ripgrep && ok "ripgrep installed" || warn "ripgrep install failed"
 fi
 
 # Install config into Neovim's actual stdpath("config"). Snap builds may use
@@ -91,7 +104,7 @@ ok "nvim config ${D}→ $NVIM_DIR/${R}"
 step "Installing nvim plugins"
 plugin_log="$(mktemp)"
 if nvim --headless "+Lazy! restore" +qa >"$plugin_log" 2>&1; then
-    if grep -Eq "E492:|Failed to load" "$plugin_log"; then
+    if grep -Eq "E492:|Failed to load|Error detected" "$plugin_log"; then
         warn "plugin bootstrap hit config errors — open nvim manually"
         tail -20 "$plugin_log" || true
     elif grep -q "mason.nvim] Neovim exited while the following packages were installing" "$plugin_log"; then
@@ -104,6 +117,24 @@ else
     tail -20 "$plugin_log" || true
 fi
 rm -f "$plugin_log"
+
+# Verify the environment nvim actually sees (rg, tree-sitter CLI, node)
+step "Verifying nvim environment"
+health_log="$(mktemp)"
+nvim --headless "+checkhealth lazyvim" "+silent w! $health_log" +qa >/dev/null 2>&1 || true
+for dep in rg "tree-sitter"; do
+    if grep -q "✅ OK \`$dep\`" "$health_log" 2>/dev/null; then
+        ok "$dep healthy inside nvim"
+    else
+        warn "$dep reported unhealthy in checkhealth — run :checkhealth lazyvim in nvim"
+    fi
+done
+if grep -q "❌ ERROR" "$health_log" 2>/dev/null; then
+    warn "checkhealth reports errors — run :checkhealth lazyvim in nvim for details"
+else
+    ok "checkhealth clean"
+fi
+rm -f "$health_log"
 
 echo ""
 echo -e "  ${GRN}Done!${R} Run ${CYN}nvim${R} to start"

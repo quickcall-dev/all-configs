@@ -1,9 +1,11 @@
+# VS Code "Default Light+" — official colors
+# Source: microsoft/vscode terminalColorRegistry.ts (light defaults) + light_vs.json
 palette = 0=#000000
 palette = 1=#cd3131
 palette = 2=#107C10
 palette = 3=#949800
 palette = 4=#0451a5
-palette = 5=#8250df
+palette = 5=#bc05bc
 palette = 6=#0598bc
 palette = 7=#555555
 palette = 8=#666666
@@ -11,12 +13,12 @@ palette = 9=#cd3131
 palette = 10=#14CE14
 palette = 11=#b5ba00
 palette = 12=#0451a5
-palette = 13=#b083f0
+palette = 13=#bc05bc
 palette = 14=#0598bc
 palette = 15=#a5a5a5
-background = #f2f4f7
-foreground = #3b3b3b
-cursor-color = #0451a5
-cursor-text = #f2f4f7
-selection-background = #c7ddf2
+background = #ffffff
+foreground = #333333
+cursor-color = #333333
+cursor-text = #ffffff
+selection-background = #add6ff
 selection-foreground = #333333

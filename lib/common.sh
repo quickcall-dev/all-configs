@@ -114,7 +114,9 @@ brew_install_cask() {
         return 0
     fi
     step "Installing $name"
-    yes | NONINTERACTIVE=1 CI=1 brew install --cask "$name"
+    # no `yes |` pipe: under `set -o pipefail` yes exits 141 (SIGPIPE) and
+    # fails the whole pipeline even when brew succeeds
+    NONINTERACTIVE=1 CI=1 brew install --cask "$name"
     ok "$name installed"
 }
 
@@ -125,7 +127,7 @@ brew_install_formula() {
         return 0
     fi
     step "Installing $name"
-    yes | NONINTERACTIVE=1 CI=1 brew install "$name"
+    NONINTERACTIVE=1 CI=1 brew install "$name"
     ok "$name installed"
 }
 
