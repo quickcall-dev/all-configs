@@ -50,6 +50,7 @@ Keys inside the TUI:
 | **nvim** | Neovim config with LazyVim, treesitter, fzf |
 | **pi** | Pi coding agent CLI, settings, and package extensions |
 | **skills** | QuickCall skills + Pi system skills |
+| **multi-github** | Two GitHub accounts on one machine — per-account SSH aliases, directory-scoped git identity, URL rewriting so pushes never use the wrong account |
 | **ssh-keygen** | Generate SSH keys, update `~/.ssh/config`, test GitHub auth |
 | **aqua-voice** | Installs Aqua Voice via Homebrew |
 | **keycastr**   | Installs KeyCastr via Homebrew |
@@ -91,8 +92,6 @@ Install the Pi coding agent, copy settings, and install package extensions:
 Configured packages (in `pi/settings.json`):
 - `npm:@tintinweb/pi-subagents`
 - `npm:pi-web-access`
-- `npm:pi-caveman`
-- `https://github.com/obra/superpowers`
 
 ### skills
 
@@ -116,6 +115,30 @@ GIT_NAME="Sagar Sarkale" GIT_EMAIL="sagar@example.com" ./github/install.sh
 ```
 
 Then run `gh auth login` to authenticate.
+
+### multi-github
+
+Run two (or more) GitHub accounts on one machine without ever pushing or
+committing as the wrong one. Sets up per-account SSH host aliases, a
+directory-scoped git identity, and URL rewriting so every GitHub remote inside
+your work directory authenticates as the work account — even `https://` URLs:
+
+```bash
+./multi-github/install.sh -p <personal-login> -w <work-login> -d "$HOME/work" \
+  -W "<id>+<work-login>@users.noreply.github.com"
+```
+
+No account names or emails are stored in the script — all four options are
+required. It generates `~/.ssh/id_ed25519_<login>` per account, adds
+`github.com` (personal) and `github-<work-login>` (work) host aliases to
+`~/.ssh/config`, and registers a `gitdir` include in `~/.gitconfig` so repos
+under the work dir commit as the work identity. After running, add each
+printed public key to its account at `https://github.com/settings/ssh/new`,
+then verify with `ssh -T git@github.com` and
+`ssh -T git@github-<work-login>`.
+
+Note: `gh` CLI commands still use the gh-active account (`gh auth status`) —
+this module fixes git pushes/authorship, not gh API calls.
 
 ### ssh-keygen
 

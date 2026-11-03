@@ -1,0 +1,3 @@
+name = "multi-github"
+description = "Two GitHub accounts on one machine — per-account SSH aliases, directory-based git identity, and URL rewriting so pushes never use the wrong account"
+platforms = ["mac", "linux"]
