@@ -1,0 +1,3 @@
+name = "tinycast"
+description = "Tinycast launcher (tap abue-ammar/tinycast) + managed settings"
+platforms = ["mac"]
