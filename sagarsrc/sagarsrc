@@ -1,7 +1,10 @@
 # sagarsrc — personal shell aliases & functions
 
 # ll: detailed listing
-alias ll='ls -la'
+alias ll='ls -la | grep -v " ._"'
+
+# reload: re-source shell config
+alias reload='source ~/.bashrc'
 
 # ckdir: create a directory (with parents) and cd into it
 ckdir() {
