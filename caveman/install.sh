@@ -38,6 +38,15 @@ else
 fi
 rm -f "$plugin_log"
 
+step "Installing caveman skill (claude-code, codex, pi)"
+
+if ! command -v npx &>/dev/null; then
+    warn "npx not found — installing node first"
+    bash "$ROOT_DIR/node/install.sh"
+fi
+
+npx --yes skills add JuliusBrussee/caveman --skill caveman --agent claude-code --agent codex --agent pi -g -y
+
 step "Setting caveman ultra defaults"
 
 CAVEMAN_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/caveman"
