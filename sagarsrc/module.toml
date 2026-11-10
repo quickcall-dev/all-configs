@@ -1,3 +1,0 @@
-name = "sagarsrc"
-description = "Personal shell aliases (ll, ckdir) sourced from ~/.sagarsrc"
-platforms = ["mac", "linux"]

@@ -1,0 +1,3 @@
+name = "aliases"
+description = "Personal shell aliases (ll, la, ckdir) sourced from ~/.aliases"
+platforms = ["mac", "linux"]
