@@ -57,7 +57,7 @@
   },
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "terminal.integrated.fontFamily": "MesloLGS Nerd Font Mono",
   "java.home": "/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home",
   "files.exclude": {
     "**/.classpath": true,
