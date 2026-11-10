@@ -66,7 +66,6 @@ docs/             experiments, plans, assets
 | **ghostty** | Ghostty terminal config + themes |
 | **github** | GitHub CLI (`gh`) and global git config without credentials |
 | **docker** | Installs Docker Desktop via Homebrew |
-| **moshi** | Moshi remote-login hook + mosh transport via Homebrew |
 | **tailscale** | Tailscale mesh VPN via Homebrew |
 | **karabiner** | Karabiner-Elements key remaps |
 | **node** | Node.js, npm, npx via system package manager |
@@ -86,7 +85,6 @@ docs/             experiments, plans, assets
 | **zed** | Zed editor settings with Nerd Font terminal icons |
 | **zoxide** | Smarter `cd` command with learning and fzf integration |
 | **p10k** | Powerlevel10k prompt config and theme |
-| **raycast** | Installs Raycast via Homebrew |
 | **bitwarden** | Installs Bitwarden via Homebrew |
 | **rectangle** | Installs Rectangle via Homebrew |
 | **ffmpeg** | Cross-platform audio/video conversion and streaming toolkit |
