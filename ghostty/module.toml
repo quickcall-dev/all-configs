@@ -1,3 +1,9 @@
 name = "ghostty"
 description = "Ghostty terminal config + themes"
 platforms = ["mac", "linux"]
+kind = "config"
+
+[detect]
+commands = ["ghostty"]
+apps = ["Ghostty"]
+paths = ["~/.config/ghostty/config"]

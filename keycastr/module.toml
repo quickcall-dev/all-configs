@@ -1,3 +1,11 @@
 name = "keycastr"
 description = "Installs KeyCastr via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["keycastr"]
+apps = ["KeyCastr"]
+
+[uninstall]
+brew = ["keycastr"]

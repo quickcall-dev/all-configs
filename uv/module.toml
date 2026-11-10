@@ -1,3 +1,7 @@
 name = "uv"
-description = "Astral uv — fast Python package and project manager"
+description = "Astral uv \u2014 fast Python package and project manager"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["uv"]

@@ -1,3 +1,11 @@
 name = "aqua-voice"
 description = "Installs Aqua Voice via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["aqua-voice"]
+apps = ["Aqua Voice"]
+
+[uninstall]
+brew = ["aqua-voice"]

@@ -1,4 +1,11 @@
 name = "tailscale"
 description = "Tailscale mesh VPN"
 platforms = ["mac"]
-package = "tailscale"
+kind = "app"
+
+[detect]
+brew = ["tailscale"]
+commands = ["tailscale"]
+
+[uninstall]
+brew = ["tailscale"]

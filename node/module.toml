@@ -1,3 +1,11 @@
 name = "node"
 description = "Node.js, npm, npx via system package manager"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["node"]
+
+[uninstall]
+brew = ["node"]
+packages = ["nodejs"]

@@ -1,3 +1,7 @@
 name = "claude"
 description = "Claude Code CLI via claude.ai/install.sh"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["claude"]

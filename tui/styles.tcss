@@ -1,164 +1,287 @@
+/* Colours come from the active theme (tui/theme.py), so light and dark both work.
+   Default theme: all-configs-light (ALL_CONFIGS_THEME=dark, or ctrl+p). */
+
+/* one flat surface everywhere; panels are told apart by their borders */
 Screen {
-    background: #f9fafb;
-    color: #111827;
+    background: $surface;
 }
 
-#main {
-    width: 100%;
-    height: 100%;
-    layout: vertical;
+/* top bar: brand, breadcrumb, summary */
+
+#topbar {
+    height: 1;
+    padding: 0 2;
 }
 
-#header {
-    height: 3;
-    content-align: center middle;
-    background: #1e3a8a;
-    color: #ffffff;
+#brand {
+    width: auto;
+    color: $primary;
     text-style: bold;
+}
+
+#crumb {
+    width: auto;
+    padding-left: 2;
+    color: $text-muted;
+}
+
+#summary {
+    width: 1fr;
+    text-align: right;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* panels: thin rounded borders with titles, accent when focused */
+
+#module-table, #jobs, #log, #empty {
+    border: round $border-blurred;
+    border-title-color: $text-muted;
+    border-title-style: bold;
+    border-subtitle-color: $text-muted;
+    background: $surface;
+    scrollbar-size-vertical: 1;
+}
+
+#module-table:focus, #log:focus {
+    border: round $primary;
+    border-title-color: $primary;
+}
+
+/* main screen */
+
+#search-row {
+    height: 1;
+    margin: 1 1 0 1;
+    padding: 0 1;
+    background: $foreground 4%;
+}
+
+#search-row:focus-within {
+    background: $primary 10%;
+}
+
+#search-icon {
+    width: 2;
+    color: $text-muted;
+    text-style: bold;
+}
+
+#search-row:focus-within #search-icon {
+    color: $primary;
 }
 
 #search {
-    margin: 1 2;
-    height: 3;
-    border: solid #d1d5db;
-    background: #ffffff;
-    color: #111827;
+    width: 1fr;
+    background: transparent;
 }
 
 #module-table {
-    margin: 0 2;
     height: 1fr;
-    border: solid #d1d5db;
-    background: #ffffff;
-    color: #111827;
+    margin: 1 1 0 1;
+    overflow-x: hidden;
 }
 
-#module-table .datatable--header {
-    background: #e5e7eb;
-    color: #111827;
+#module-table > .datatable--header {
+    background: $surface;
+    color: $text-muted;
     text-style: bold;
 }
 
-#module-table .datatable--cursor {
-    background: #bfdbfe;
+#module-table:focus > .datatable--header {
+    background-tint: transparent;
 }
 
-#module-table .datatable--hover {
-    background: #eff6ff;
+#module-table:focus {
+    background-tint: transparent;
 }
 
-#footer {
-    height: 1;
+#empty {
+    height: 1fr;
+    margin: 1 1 0 1;
     content-align: center middle;
-    background: #f3f4f6;
-    color: #4b5563;
+    color: $text-muted;
 }
 
-#splash-overlay {
-    position: absolute;
-    offset: 0 0;
-    width: 100%;
-    height: 100%;
-    background: #f9fafb;
+#selection-bar {
+    height: 1;
+    margin: 0 2;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+Footer {
+    background: $footer-background;
+}
+
+/* dialogs */
+
+ConfirmScreen, HelpScreen {
     align: center middle;
+    background: $background 70%;
 }
 
-#splash {
-    width: 34;
+#dialog {
+    width: 60;
+    max-width: 90%;
     height: auto;
-    padding: 2 3;
-    border: solid #d1d5db;
-    background: #ffffff;
-    align: center middle;
+    max-height: 85%;
+    padding: 1 2 0 2;
+    border: round $primary;
+    border-title-color: $primary;
+    border-title-style: bold;
+    border-subtitle-color: $text-muted;
+    background: $surface;
 }
 
-#splash-title {
-    text-align: center;
-    text-style: bold;
-    color: #1e3a8a;
-    margin: 1 0;
+#dialog.danger {
+    border: round $error;
+    border-title-color: $error;
 }
 
-#splash-progress {
-    margin: 1 0;
+#dialog.help {
+    width: 70;
 }
 
-#help {
-    width: 40;
+#confirm-body {
     height: auto;
-    padding: 1 2;
-    border: solid #d1d5db;
-    background: #ffffff;
-    align: center middle;
+    max-height: 20;
+    scrollbar-size-vertical: 1;
 }
 
-#help-text {
-    color: #111827;
+.buttons {
+    height: 1;
     margin: 1 0;
+    align-horizontal: right;
 }
 
-#confirm {
-    width: 50;
-    height: auto;
-    padding: 1 2;
-    border: solid #d1d5db;
-    background: #ffffff;
-    align: center middle;
-}
-
-#confirm-title {
-    text-align: center;
-    text-style: bold;
-    color: #111827;
-    margin: 1 0;
-}
-
-#confirm-list {
-    height: 1fr;
-    margin: 1 0;
-    color: #4b5563;
-}
-
-#confirm-buttons {
-    height: auto;
-    align: center middle;
-    margin: 1 0;
-}
-
-#install {
-    width: 80;
-    height: 24;
-    padding: 1 2;
-    border: solid #d1d5db;
-    background: #ffffff;
-    align: center middle;
-}
-
-#install-title {
-    text-align: center;
-    text-style: bold;
-    color: #111827;
-    margin: 1 0;
-}
-
-#install-log {
-    height: 1fr;
-    border: solid #d1d5db;
-    background: #ffffff;
-    color: #111827;
-    margin: 1 0;
-}
-
-#close {
-    width: 100%;
-}
+/* compact, flat buttons: neutral by default, solid for the main action */
 
 Button {
-    background: #2563eb;
-    color: #ffffff;
-    margin: 0 1;
+    min-width: 10;
+    margin-left: 2;
+    padding: 0 1;
+    color: $foreground;
+    background: $foreground 8%;
+}
+
+Button:hover {
+    background: $foreground 14%;
+}
+
+Button.-primary {
+    color: $surface;
+    background: $primary;
+    text-style: bold;
+}
+
+Button.-error {
+    color: $surface;
+    background: $error;
+    text-style: bold;
+}
+
+Button.-primary:hover, Button.-error:hover {
+    background-tint: $surface 15%;
 }
 
 Button:focus {
-    background: #1d4ed8;
+    text-style: bold;
+    background-tint: $foreground 18%;
+}
+
+Button:disabled {
+    color: $foreground 35%;
+    background: $foreground 5%;
+    text-style: none;
+}
+
+/* run screen */
+
+#run-body {
+    height: 1fr;
+    margin: 1 1 0 1;
+}
+
+#jobs {
+    width: 28;
+    height: 1fr;
+}
+
+#run-main {
+    width: 1fr;
+    margin-left: 1;
+}
+
+#log {
+    height: 1fr;
+    padding: 0 1;
+    overflow-x: hidden;
+}
+
+#log.ok {
+    border: round $success;
+    border-subtitle-color: $success;
+}
+
+#log.err {
+    border: round $error;
+    border-subtitle-color: $error;
+}
+
+#log.warn {
+    border: round $warning;
+    border-subtitle-color: $warning;
+}
+
+#live {
+    display: none;
+    height: 1;
+    padding: 0 2;
+    color: $text-muted;
+}
+
+#reply {
+    display: none;
+    border: round $warning;
+    border-title-color: $warning;
+    border-title-style: bold;
+    background: $surface;
+}
+
+#reply.waiting {
+    display: block;
+}
+
+#reply:focus {
+    border: round $warning;
+    background-tint: transparent;
+}
+
+#run-bar {
+    height: 1;
+    margin: 1 1;
+    padding: 0 1;
+}
+
+#progress {
+    width: 1fr;
+}
+
+#progress Bar {
+    width: 1fr;
+}
+
+#progress Bar > .bar--bar {
+    color: $primary;
+    background: $panel;
+}
+
+#progress Bar > .bar--complete {
+    color: $success;
+    background: $panel;
+}
+
+#progress PercentageStatus {
+    color: $text-muted;
 }

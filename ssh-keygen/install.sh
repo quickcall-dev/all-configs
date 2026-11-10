@@ -25,7 +25,8 @@ USAGE
 
 EMAIL="${EMAIL:-}"
 USERNAME="${USERNAME:-$(whoami)}"
-HOSTNAME="${HOSTNAME:-github.com}"
+# bash presets $HOSTNAME to the machine name, so it cannot carry a default
+TARGET_HOST="${SSH_HOST:-github.com}"
 KEYNAME="${KEYNAME:-}"
 COMMENT="${COMMENT:-}"
 
@@ -33,7 +34,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -e|--email) EMAIL="$2"; shift 2 ;;
     -u|--username) USERNAME="$2"; shift 2 ;;
-    -H|--hostname) HOSTNAME="$2"; shift 2 ;;
+    -H|--hostname) TARGET_HOST="$2"; shift 2 ;;
     -k|--keyname) KEYNAME="$2"; shift 2 ;;
     -c|--comment) COMMENT="$2"; shift 2 ;;
     -h|--help) usage ;;
@@ -41,11 +42,14 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ -n "$EMAIL" ]] || { fail "--email is required"; usage; }
+if [[ -z "$EMAIL" && -t 0 ]]; then
+  read -rp "  Email for SSH key comment: " EMAIL
+fi
+[[ -n "$EMAIL" ]] || { fail "--email is required (or set EMAIL)"; exit 1; }
 
 if [[ -z "$KEYNAME" ]]; then
   # strip domain suffix, e.g. github.com -> github
-  KEYNAME="id_ed25519_${HOSTNAME%%.*}"
+  KEYNAME="id_ed25519_${TARGET_HOST%%.*}"
 fi
 [[ -n "$COMMENT" ]] || COMMENT="$EMAIL"
 
@@ -83,17 +87,20 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   chmod 600 "$CONFIG_FILE"
 fi
 
-HOST_ALIAS="$HOSTNAME"
+HOST_ALIAS="$TARGET_HOST"
 
 # Remove existing block for this host if present
 if grep -q "# ssh-keygen: $HOST_ALIAS" "$CONFIG_FILE" 2>/dev/null; then
-  sed -i "/# ssh-keygen: $HOST_ALIAS/,/# end ssh-keygen: $HOST_ALIAS/d" "$CONFIG_FILE"
+  # portable in-place delete (BSD sed -i needs a suffix arg, GNU does not)
+  tmp="$(mktemp)"
+  sed "/# ssh-keygen: $HOST_ALIAS/,/# end ssh-keygen: $HOST_ALIAS/d" "$CONFIG_FILE" > "$tmp"
+  cat "$tmp" > "$CONFIG_FILE" && rm -f "$tmp"
 fi
 
 cat >> "$CONFIG_FILE" << EOF
 # ssh-keygen: $HOST_ALIAS
 Host $HOST_ALIAS
-    HostName $HOSTNAME
+    HostName $TARGET_HOST
     User $USERNAME
     IdentityFile $KEY_PATH
     IdentitiesOnly yes
@@ -104,7 +111,7 @@ ok "SSH config updated: $CONFIG_FILE"
 
 step "Testing GitHub SSH authentication"
 
-if [[ "$HOSTNAME" == "github.com" ]]; then
+if [[ "$TARGET_HOST" == "github.com" ]]; then
   if ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -i "$KEY_PATH" -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
     ok "GitHub SSH authentication works"
   else
@@ -117,7 +124,7 @@ fi
 echo ""
 echo -e "  ${GRN}Done!${R} Public key: ${CYN}$KEY_PATH.pub${R}"
 echo ""
-echo -e "  ${D}Add this to $HOSTNAME:${R}"
+echo -e "  ${D}Add this to $TARGET_HOST:${R}"
 echo ""
 cat "$KEY_PATH.pub"
 echo ""

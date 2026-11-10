@@ -1,3 +1,11 @@
 name = "bitwarden"
 description = "Installs Bitwarden via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["bitwarden"]
+apps = ["Bitwarden"]
+
+[uninstall]
+brew = ["bitwarden"]

@@ -1,3 +1,11 @@
 name = "zoxide"
 description = "Smarter cd command with learning and fzf integration"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["zoxide"]
+
+[uninstall]
+brew = ["zoxide"]
+packages = ["zoxide"]

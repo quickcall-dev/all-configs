@@ -1,3 +1,7 @@
 name = "statusline"
 description = "Status bar + turn counter for Claude Code"
 platforms = ["mac", "linux"]
+kind = "config"
+
+[detect]
+paths = ["~/.claude/statusline-command.sh"]

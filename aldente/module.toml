@@ -1,3 +1,11 @@
 name = "aldente"
 description = "Installs AlDente via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["aldente"]
+apps = ["AlDente"]
+
+[uninstall]
+brew = ["aldente"]

@@ -1,3 +1,11 @@
 name = "betterdisplay"
 description = "Installs BetterDisplay via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["betterdisplay"]
+apps = ["BetterDisplay"]
+
+[uninstall]
+brew = ["betterdisplay"]

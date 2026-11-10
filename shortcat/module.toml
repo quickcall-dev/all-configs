@@ -1,3 +1,11 @@
 name = "shortcat"
 description = "Installs Shortcat via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["shortcat"]
+apps = ["Shortcat"]
+
+[uninstall]
+brew = ["shortcat"]

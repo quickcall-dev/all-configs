@@ -1,4 +1,8 @@
 name = "vscode"
 description = "Installs VS Code via Homebrew and copies settings"
 platforms = ["mac"]
-package = "visual-studio-code"
+kind = "config"
+
+[detect]
+apps = ["Visual Studio Code"]
+paths_mac = ["~/Library/Application Support/Code/User/settings.json"]

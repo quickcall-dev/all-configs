@@ -1,3 +1,11 @@
 name = "keepingyouawake"
 description = "Installs KeepingYouAwake (prevents Mac sleep) via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["keepingyouawake"]
+apps = ["KeepingYouAwake"]
+
+[uninstall]
+brew = ["keepingyouawake"]

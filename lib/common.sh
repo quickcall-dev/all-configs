@@ -59,21 +59,27 @@ pkg_check() {
 pkg_uninstall() {
     local pkg="$1"
     if [[ "$PLATFORM" == "mac" ]]; then
-        if command -v brew &>/dev/null; then
-            if brew list --cask "$pkg" &>/dev/null 2>&1; then
-                yes | NONINTERACTIVE=1 CI=1 brew uninstall --cask "$pkg"
-                return 0
-            elif brew list "$pkg" &>/dev/null 2>&1; then
-                yes | NONINTERACTIVE=1 CI=1 brew uninstall "$pkg"
-                return 0
-            fi
+        # macOS: only Homebrew-managed packages can be removed here; never
+        # fall through to Linux package managers.
+        command -v brew &>/dev/null || { fail "Homebrew not found"; return 1; }
+        if brew_cask_installed "$pkg"; then
+            NONINTERACTIVE=1 CI=1 brew uninstall --cask "$pkg"
+        elif brew_formula_installed "$pkg"; then
+            NONINTERACTIVE=1 CI=1 brew uninstall "$pkg"
+        else
+            warn "$pkg is not managed by Homebrew — remove it manually"
+            return 1
         fi
+        return
     fi
     if command -v apt-get &>/dev/null; then
+        dpkg -s "$pkg" &>/dev/null || { warn "$pkg is not installed (dpkg)"; return 1; }
         sudo apt-get remove -y -qq "$pkg"
     elif command -v dnf &>/dev/null; then
+        rpm -q "$pkg" &>/dev/null || { warn "$pkg is not installed (rpm)"; return 1; }
         sudo dnf remove -y "$pkg"
     elif command -v pacman &>/dev/null; then
+        pacman -Q "$pkg" &>/dev/null || { warn "$pkg is not installed (pacman)"; return 1; }
         sudo pacman -R --noconfirm "$pkg"
     else
         fail "No supported package manager for uninstall"; return 1

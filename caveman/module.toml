@@ -1,3 +1,7 @@
 name = "caveman"
-description = "caveman Claude Code plugin — ~75% fewer output tokens"
+description = "caveman Claude Code plugin \u2014 ~75% fewer output tokens"
 platforms = ["mac", "linux"]
+kind = "config"
+
+[detect]
+paths = ["~/.config/caveman/config.json"]

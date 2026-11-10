@@ -1,3 +1,11 @@
 name = "yt-dlp"
 description = "YouTube/video downloader and extractor"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["yt-dlp"]
+
+[uninstall]
+brew = ["yt-dlp"]
+packages = ["yt-dlp"]

@@ -1,3 +1,7 @@
 name = "tinycast"
 description = "Tinycast launcher (tap abue-ammar/tinycast) + managed settings"
 platforms = ["mac"]
+kind = "config"
+
+[detect]
+paths = ["~/.config/tinycast/settings.json"]

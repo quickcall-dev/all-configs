@@ -1,3 +1,11 @@
 name = "ncdu"
 description = "Interactive disk usage analyzer"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["ncdu"]
+
+[uninstall]
+brew = ["ncdu"]
+packages = ["ncdu"]

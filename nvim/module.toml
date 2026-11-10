@@ -1,4 +1,8 @@
 name = "nvim"
 description = "Neovim config with Lazy, treesitter, fzf"
 platforms = ["mac", "linux"]
-package = "neovim"
+kind = "config"
+
+[detect]
+commands = ["nvim"]
+paths = ["~/.config/nvim/init.lua"]

@@ -53,6 +53,15 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Interactive fallback (terminal or the TUI's pty): prompt for anything not given
+if [[ -t 0 ]]; then
+  [[ -n "$PERSONAL" ]]   || read -rp "  Personal GitHub login: " PERSONAL
+  [[ -n "$WORK" ]]       || read -rp "  Work GitHub login: " WORK
+  [[ -n "$WORK_DIR" ]]   || read -rp "  Directory for work repos (e.g. \$HOME/work): " WORK_DIR
+  [[ -n "$WORK_EMAIL" ]] || read -rp "  Work commit email: " WORK_EMAIL
+  WORK_DIR="${WORK_DIR/#\~/$HOME}"
+fi
+
 missing=()
 [[ -z "$PERSONAL" ]] && missing+=("--personal")
 [[ -z "$WORK" ]] && missing+=("--work")

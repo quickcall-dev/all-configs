@@ -1,3 +1,11 @@
 name = "ffmpeg"
 description = "Cross-platform audio/video conversion and streaming toolkit"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["ffmpeg"]
+
+[uninstall]
+brew = ["ffmpeg"]
+packages = ["ffmpeg"]

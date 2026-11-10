@@ -1,4 +1,8 @@
 name = "github"
 description = "GitHub CLI and global git config without credentials"
 platforms = ["mac", "linux"]
-package = "gh"
+kind = "config"
+
+[detect]
+commands = ["gh"]
+paths = ["~/.gitconfig"]

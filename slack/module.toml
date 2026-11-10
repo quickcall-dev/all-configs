@@ -1,3 +1,11 @@
 name = "slack"
 description = "Installs Slack via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["slack"]
+apps = ["Slack"]
+
+[uninstall]
+brew = ["slack"]

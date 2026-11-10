@@ -1,3 +1,11 @@
 name = "docker"
 description = "Installs Docker Desktop via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["docker", "docker-desktop"]
+apps = ["Docker"]
+
+[uninstall]
+brew = ["docker"]

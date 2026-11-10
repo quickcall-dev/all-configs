@@ -1,3 +1,8 @@
 name = "p10k"
 description = "Powerlevel10k prompt config and theme"
 platforms = ["mac"]
+kind = "config"
+
+[detect]
+brew = ["powerlevel10k"]
+paths = ["~/.p10k.zsh"]

@@ -1,3 +1,7 @@
 name = "hf"
 description = "Hugging Face CLI (hf) via hf.co/install.sh"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["hf"]

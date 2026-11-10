@@ -1,3 +1,7 @@
 name = "codex"
 description = "Installs OpenAI Codex CLI via official installer"
 platforms = ["mac", "linux"]
+kind = "cli"
+
+[detect]
+commands = ["codex"]

@@ -1,4 +1,8 @@
 name = "karabiner"
 description = "Karabiner-Elements key remaps"
 platforms = ["mac"]
-package = "karabiner-elements"
+kind = "config"
+
+[detect]
+apps = ["Karabiner-Elements"]
+paths = ["~/.config/karabiner/karabiner.json"]

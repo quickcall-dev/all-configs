@@ -1,3 +1,7 @@
 name = "presentify"
 description = "Installs Presentify from the Mac App Store"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+apps = ["Presentify"]

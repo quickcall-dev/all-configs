@@ -21,16 +21,25 @@ Keys inside the TUI:
 
 | Key | Action |
 |-----|--------|
-| `Tab` | move focus between search and module list |
-| `/` or just type | search modules |
-| `Space` | toggle selected module |
-| `a` | select all visible |
-| `n` | select none |
-| `i` | invert selection |
-| `Enter` | install selected (skips already-installed) |
-| `u` | uninstall selected modules |
-| `?` | show keybindings |
-| `q` / `Ctrl+Q` / `Ctrl+C` | quit |
+| `/` | search (name, description, kind, or status); `Esc` or `↓` back to the list |
+| `Space` | toggle module under cursor |
+| `a` / `n` / `i` | select all visible / none / invert |
+| `Enter` | install selected (or the module under the cursor); installed modules are re-applied |
+| `u` | uninstall selected — app/cli modules only, config modules are never uninstalled |
+| `r` | re-detect install status |
+| `?` | help |
+| `q` / `Ctrl+C` | quit |
+
+Installers run in a pseudo-terminal. When one asks for input (`sudo` password,
+`read -p` prompt), a reply box appears; passwords go straight to the installer
+and are never logged. `Esc` during a run asks before aborting. Every run writes
+a log to `~/.local/state/all-configs/logs/`.
+
+TUI tests use fake modules and a temporary `$HOME`, so they never touch the system:
+
+```bash
+./tests/run-tui-tests.sh
+```
 
 ## Modules
 
@@ -169,9 +178,28 @@ If you cannot use passwordless sudo, run the relevant module as root or install 
 Create a directory with an `install.sh` and a `module.toml`:
 
 ```toml
-name = "my-module"
+name = "my-module"                       # must match the directory name
 description = "Short one-line description"
 platforms = ["mac", "linux"]
+kind = "cli"                             # app | cli | config
+
+[detect]                                 # all keys optional
+commands = ["my-tool"]                   # tool present if any is on PATH
+brew = ["my-tool"]                       # ...or any brew formula/cask (macOS)
+apps = ["My Tool"]                       # ...or /Applications/My Tool.app (macOS)
+paths = ["~/.config/my-tool/config"]     # config applied if all exist
+paths_mac = []                           # extra paths per platform
+paths_linux = []
+
+[uninstall]                              # omit to disable uninstall
+brew = ["my-tool"]                       # macOS package names
+packages = ["my-tool"]                   # Linux (apt/dnf/pacman) package names
 ```
 
-The root `install.sh` auto-discovers it.
+Status shows `installed` when the tool is present and the config applied,
+`partial` when only one is true, and `?` when there is nothing to detect.
+`install.sh` must be idempotent: the TUI re-runs it to re-apply config.
+If it needs input, prompt only when stdin is a terminal (`[[ -t 0 ]]`) so
+`./install.sh <module>` in scripts still fails fast instead of hanging.
+
+The root `install.sh` auto-discovers it; `./install.sh --list` shows what it found.

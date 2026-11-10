@@ -10,17 +10,18 @@ usage() {
 Usage: ${0##*/} [options]
 
 Options:
-  -d, --dir <dir>  Installation directory (default: /usr/local/bin)
+  -d, --dir <dir>  Installation directory (default: ~/.local/bin)
   -h, --help       Show this help
 
 Examples:
   ${0##*/}
-  ${0##*/} -d ~/.local/bin
+  ${0##*/} -d /usr/local/bin
 USAGE
   exit 0
 }
 
-INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
+# user-writable default: no sudo needed (/usr/local/bin is root-owned on most Linux and Apple Silicon Macs)
+INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -41,20 +42,21 @@ warn "uv not found — installing via official installer"
 
 mkdir -p "$INSTALL_DIR"
 
-if [[ "$INSTALL_DIR" == /usr/local/bin || "$INSTALL_DIR" == /usr/bin ]]; then
-  curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$INSTALL_DIR" sh
-else
-  curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$INSTALL_DIR" sh
-  # add user-local bin to PATH if not already present
+curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="$INSTALL_DIR" UV_NO_MODIFY_PATH=1 sh
+export PATH="$INSTALL_DIR:$PATH"
+
+if [[ "$INSTALL_DIR" != /usr/local/bin && "$INSTALL_DIR" != /usr/bin ]]; then
+  # add the install dir to PATH in shell rc files if not already present
   for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
-    if ! grep -q "export PATH=\"$INSTALL_DIR:\$PATH\"" "$rc" 2>/dev/null; then
+    if ! grep -qF "export PATH=\"$INSTALL_DIR:\$PATH\"" "$rc" 2>/dev/null; then
       printf '\n# uv\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "$rc"
       ok "added $INSTALL_DIR to PATH in $(basename "$rc")"
     fi
   done
 fi
 
+command -v uv &>/dev/null || { fail "uv not found in $INSTALL_DIR after install"; exit 1; }
 ok "uv installed ${D}$(uv --version)${R}"
 
 step "Installing uvx"

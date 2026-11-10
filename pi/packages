@@ -1,0 +1,5 @@
+# Pi extension packages (npm, git, or URL sources)
+# One per line. Blank lines and # comments ignored.
+# Keep in sync with "packages" in pi/settings.json.
+npm:pi-web-access
+npm:@tintinweb/pi-subagents

@@ -1,3 +1,11 @@
 name = "rectangle"
 description = "Installs Rectangle via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["rectangle"]
+apps = ["Rectangle"]
+
+[uninstall]
+brew = ["rectangle"]

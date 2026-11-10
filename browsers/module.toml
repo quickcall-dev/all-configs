@@ -1,3 +1,11 @@
 name = "browsers"
 description = "Brave and Google Chrome via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["brave-browser", "google-chrome"]
+apps = ["Brave Browser", "Google Chrome"]
+
+[uninstall]
+brew = ["brave-browser", "google-chrome"]

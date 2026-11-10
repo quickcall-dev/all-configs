@@ -1,3 +1,11 @@
 name = "spotify"
 description = "Installs Spotify via Homebrew"
 platforms = ["mac"]
+kind = "app"
+
+[detect]
+brew = ["spotify"]
+apps = ["Spotify"]
+
+[uninstall]
+brew = ["spotify"]

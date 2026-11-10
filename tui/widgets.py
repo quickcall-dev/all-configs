@@ -6,27 +6,17 @@ from textual.widgets import DataTable, Input
 
 
 class ModuleTable(DataTable):
-    """Module list that toggles selection with space and moves focus up to search."""
+    """Module list. Space toggles, enter installs, up on the first row jumps to search."""
 
     BINDINGS = [
-        Binding("enter", "install", "Install"),
+        Binding("space", "screen.toggle", "Select"),
+        Binding("enter", "screen.install", "Install"),
     ]
 
-    def on_mount(self) -> None:
-        self.add_column("", key="selected", width=3)
-        self.add_column("Module", key="module", width=15)
-        self.add_column("Description", key="description")
-        self.add_column("Status", key="status", width=12)
-        self.add_column("Platforms", key="platforms", width=11)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(cursor_type="row", cursor_foreground_priority="renderable", **kwargs)
 
     def on_key(self, event: events.Key) -> None:
-        if event.key == "space":
-            self.app.action_toggle()
+        if event.key == "up" and self.cursor_row == 0:
+            self.screen.query_one("#search", Input).focus()
             event.stop()
-        elif event.key == "up" and self.cursor_row == 0:
-            self.app.screen.query_one("#search", Input).focus()
-            event.stop()
-
-    def action_install(self) -> None:
-        """Trigger install from the module table."""
-        self.app.action_install()
