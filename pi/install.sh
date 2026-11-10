@@ -58,23 +58,18 @@ backup_file "$PI_AGENT_DIR/settings.json"
 cp "$SCRIPT_DIR/settings.json" "$PI_AGENT_DIR/settings.json"
 ok "Pi settings ${D}→ ~/.pi/agent/settings.json${R}"
 
-step "Installing Pi packages"
+step "Installing Pi extension packages"
 
-packages=(
-  "npm:@tintinweb/pi-subagents"
-  "npm:pi-web-access"
-  "npm:pi-caveman"
-  "https://github.com/obra/superpowers"
-)
-
-for pkg in "${packages[@]}"; do
+# Read package list from pi/packages (blank lines + # comments ignored)
+while IFS= read -r pkg; do
+  [[ -z "$pkg" || "$pkg" == \#* ]] && continue
   if pi list 2>/dev/null | grep -q "${pkg#npm:}"; then
     ok "already installed: $pkg"
   else
     pi install "$pkg" --approve 2>&1 | tail -5
     ok "installed: $pkg"
   fi
-done
+done < <(grep -v '^\s*#\|^\s*$' "$SCRIPT_DIR/packages")
 
 echo ""
 echo -e "  ${GRN}Done!${R} Run ${CYN}pi${R} to start"

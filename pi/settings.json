@@ -5,9 +5,7 @@
   "hideThinkingBlock": true,
   "packages": [
     "npm:@tintinweb/pi-subagents",
-    "npm:pi-web-access",
-    "npm:pi-caveman",
-    "https://github.com/obra/superpowers"
+    "npm:pi-web-access"
   ],
   "treeFilterMode": "all",
   "theme": "light",
