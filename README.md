@@ -21,7 +21,8 @@ Keys inside the TUI:
 
 | Key | Action |
 |-----|--------|
-| `/` | search (name, description, kind, or status); `Esc` or `↓` back to the list |
+| `/` | search (name, description, kind, or status); `Enter` or `↓` back to the list, filter kept |
+| `Esc` | step back one layer: clear the search, then clear the selection; on the run screen, abort (asks first) or go back when finished. The footer shows what it will do. |
 | `Space` | toggle module under cursor |
 | `a` / `n` / `i` | select all visible / none / invert |
 | `Enter` | install selected (or the module under the cursor); installed modules are re-applied |
@@ -32,7 +33,7 @@ Keys inside the TUI:
 
 Installers run in a pseudo-terminal. When one asks for input (`sudo` password,
 `read -p` prompt), a reply box appears; passwords go straight to the installer
-and are never logged. `Esc` during a run asks before aborting. Every run writes
+and are never logged. Every run writes
 a log to `~/.local/state/all-configs/logs/`.
 
 TUI tests use fake modules and a temporary `$HOME`, so they never touch the system:

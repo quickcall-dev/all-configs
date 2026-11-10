@@ -184,3 +184,38 @@ async def test_password_prompt_is_masked_and_not_logged(root, probe):
         assert screen.jobs[0].state == "ok"
         log = screen.log_path.read_text()
         assert "auth ok" in log and "hunter2" not in log
+
+
+def _footer_keys(app) -> dict[str, str]:
+    return {k: b.binding.description for k, b in app.screen.active_bindings.items()}
+
+
+async def test_escape_steps_back_one_layer(root, probe):
+    app = app_for(root, probe)
+    async with app.run_test(size=(120, 40)) as pilot:
+        await goto(pilot, app, "okmod")
+        main = app.screen
+        assert "escape" not in _footer_keys(app)  # nothing to undo
+        await pilot.press("space")
+        assert _footer_keys(app)["escape"] == "Clear selection"
+        await pilot.press("slash", *"ok")
+        assert _footer_keys(app)["escape"] == "Clear search"
+        await pilot.press("escape")  # clears search, keeps selection
+        assert main.query_one("#search").value == ""
+        assert app.selected
+        await pilot.press("escape")  # clears selection
+        assert not app.selected
+        assert "escape" not in _footer_keys(app)
+        await pilot.press("slash", "escape")  # empty search: just leaves it
+        assert not main.query_one("#search").has_focus
+
+
+async def test_run_screen_escape_label_follows_state(root, probe):
+    app = app_for(root, probe)
+    async with app.run_test(size=(120, 40)) as pilot:
+        await goto(pilot, app, "okmod")
+        await pilot.press("enter", "y")
+        await run_and_wait(pilot, app)
+        assert _footer_keys(app)["escape"] == "Back"
+        await pilot.press("escape")
+        assert type(app.screen).__name__ == "MainScreen"

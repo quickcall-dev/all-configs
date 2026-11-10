@@ -68,6 +68,10 @@ class MainScreen(Screen):
     """Search, multi-select and status for every module on this platform."""
 
     BINDINGS = [
+        # esc steps back one layer: search text, then filter, then selection
+        Binding("escape", "clear_search", "Clear search"),
+        Binding("escape", "clear_selection", "Clear selection"),
+        Binding("escape", "leave_search", "Back", show=False),
         Binding("slash", "focus_search", "Search"),
         Binding("a", "select_all", "All"),
         Binding("n", "select_none", "None"),
@@ -162,6 +166,7 @@ class MainScreen(Screen):
         empty.update(f"No module matches “{query}”.  esc clears the search")
         table.display = not empty.display
         self.update_bars()
+        self.refresh_bindings()
 
     def refresh_module(self, module: Module) -> None:
         table = self.query_one(ModuleTable)
@@ -202,6 +207,7 @@ class MainScreen(Screen):
     def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id == "search":
             self.refresh_rows()
+            self.refresh_bindings()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         if event.input.id == "search":
@@ -209,14 +215,38 @@ class MainScreen(Screen):
 
     def on_key(self, event: events.Key) -> None:
         search = self.query_one("#search", Input)
-        if search.has_focus and event.key in ("down", "escape"):
-            if event.key == "escape" and search.value:
-                search.value = ""
+        if search.has_focus and event.key == "down":
             self.query_one(ModuleTable).focus()
             event.stop()
 
+    def on_descendant_focus(self) -> None:
+        self.refresh_bindings()
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        if not self.is_mounted:
+            return True
+        search = self.query_one("#search", Input)
+        if action == "clear_search":
+            return bool(search.value)
+        if action == "leave_search":
+            return search.has_focus and not search.value
+        if action == "clear_selection":
+            return bool(self.selected) and not search.value
+        return True
+
     def action_focus_search(self) -> None:
         self.query_one("#search", Input).focus()
+
+    def action_clear_search(self) -> None:
+        self.query_one("#search", Input).value = ""
+        self.query_one(ModuleTable).focus()
+
+    def action_leave_search(self) -> None:
+        self.query_one(ModuleTable).focus()
+
+    def action_clear_selection(self) -> None:
+        self.selected.clear()
+        self.refresh_rows()
 
     # selection ----------------------------------------------------------
 
@@ -234,6 +264,7 @@ class MainScreen(Screen):
         self.selected.symmetric_difference_update({module.name})
         self.refresh_module(module)
         self.update_bars()
+        self.refresh_bindings()
 
     def _set_visible(self, mode: str) -> None:
         for module in self.visible_modules():
@@ -245,6 +276,7 @@ class MainScreen(Screen):
                 self.selected.symmetric_difference_update({module.name})
             self.refresh_module(module)
         self.update_bars()
+        self.refresh_bindings()
 
     def action_select_all(self) -> None:
         self._set_visible("all")
@@ -446,6 +478,7 @@ class RunScreen(Screen[RunResult]):
 
     BINDINGS = [
         Binding("escape", "abort", "Abort"),
+        Binding("escape", "back", "Back"),
         Binding("ctrl+r", "retry", "Retry failed"),
         Binding("ctrl+l", "focus_log", "Log"),
     ]
@@ -573,6 +606,7 @@ class RunScreen(Screen[RunResult]):
     async def start(self, jobs: list[Job]) -> None:
         self.running = True
         self.aborting = False
+        self.refresh_bindings()
         self.query_one("#log", RichLog).set_classes("")
         self._set_buttons()
         for job in jobs:
@@ -584,6 +618,7 @@ class RunScreen(Screen[RunResult]):
             self._update_summary()
         self.running = False
         self.aborted = self.aborting
+        self.refresh_bindings()
         self.query_one("#live", Static).update("")
         failed = [j.module.name for j in self.jobs if j.state == "failed"]
         self._write("")
@@ -725,6 +760,18 @@ class RunScreen(Screen[RunResult]):
             self.action_retry()
         elif event.button.id == "done":
             self._finish()
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        if action == "abort":
+            return self.running
+        if action == "back":
+            return not self.running
+        if action == "retry":
+            return not self.running and any(j.state == "failed" for j in self.jobs)
+        return True
+
+    def action_back(self) -> None:
+        self._finish()
 
     def action_abort(self) -> None:
         if not self.running:
