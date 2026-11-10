@@ -89,6 +89,28 @@ run-shell 'tmux set-option -g default-command "exec ${SHELL:-/bin/bash} -l"'
 set-environment -g VISUAL nvim
 set-environment -g EDITOR nvim
 
+# ─── Environment sanitization ────────────────────────────────────────────────
+# If the tmux server is started from a terminal where a venv was auto-activated
+# (e.g. VS Code Python extension), tmux freezes that env globally and every new
+# pane inherits VIRTUAL_ENV + a venv-poisoned PATH. Strip it at server start.
+set-environment -gu VIRTUAL_ENV
+set-environment -gu VIRTUAL_ENV_PROMPT
+set-environment -gu CONDA_PREFIX
+set-environment -gu CONDA_DEFAULT_ENV
+set-environment -gu PYTHONSTARTUP
+# PATH captured at server start may point into a project .venv — strip any
+# .venv/bin component (rewrites deterministically, safe on reload; keeps a
+# valid PATH so run-shell children can still find tmux/sed/etc).
+run-shell 'P=$(tmux show-environment -g PATH 2>/dev/null | cut -d= -f2-); [ -n "$P" ] && tmux set-environment -g PATH "$(echo "$P" | tr ":" "\n" | grep -v "/\.venv/bin$" | paste -sd: -)"'
+# Stale VS Code / debugpy vars from the spawning terminal are useless here.
+set-environment -gu BUNDLED_DEBUGPY_PATH
+set-environment -gu VSCODE_DEBUGPY_ADAPTER_ENDPOINTS
+set-environment -gu VSCODE_PYTHON_AUTOACTIVATE_GUARD
+set-environment -gu VSCODE_GIT_IPC_HANDLE
+set-environment -gu VSCODE_GIT_ASKPASS_MAIN
+set-environment -gu VSCODE_GIT_ASKPASS_NODE
+set-environment -gu VSCODE_GIT_ASKPASS_EXTRA_ARGS
+
 # Soft pastel copy-mode selection (not harsh)
 set -g copy-mode-match-style "bg=#8fb88a,fg=#5c5a6a"
 set -g copy-mode-mark-style "bg=#8fb88a,fg=#5c5a6a"
