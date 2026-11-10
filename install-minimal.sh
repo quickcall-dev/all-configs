@@ -77,16 +77,16 @@ step "Bare-minimum install: $GIT_NAME <$GIT_EMAIL>"
 # Core tools and utilities first.
 for mod in uv node bun zoxide ffmpeg ncdu yt-dlp tmux tailscale; do
   step "Installing $mod"
-  bash "$ROOT_DIR/$mod/install.sh"
+  bash "$ROOT_DIR/modules/$mod/install.sh"
 done
 
 # Git, GitHub CLI, and SSH key for GitHub.
 step "Installing github"
-bash "$ROOT_DIR/github/install.sh"
+bash "$ROOT_DIR/modules/github/install.sh"
 
 step "Generating SSH key for GitHub"
 # Use explicit args so the container's HOSTNAME env var doesn't override the default.
-bash "$ROOT_DIR/ssh-keygen/install.sh" -H github.com -u git -e "$GIT_EMAIL" -k id_ed25519_github
+bash "$ROOT_DIR/modules/ssh-keygen/install.sh" -H github.com -u git -e "$GIT_EMAIL" -k id_ed25519_github
 
 # Debian/Ubuntu package binaries often have different names than the rest of the
 # dotfiles expect. Install them early and symlink the expected names.
@@ -112,7 +112,7 @@ if command -v fd &>/dev/null; then ok "fd present"; fi
 # File managers / editors.
 for mod in superfile nvim; do
   step "Installing $mod"
-  bash "$ROOT_DIR/$mod/install.sh"
+  bash "$ROOT_DIR/modules/$mod/install.sh"
 done
 
 # AI agent stack.
@@ -121,13 +121,13 @@ for mod in claude pi caveman hf statusline; do
   if [[ "$mod" == "statusline" ]]; then
     ensure_cmd jq jq
   fi
-  bash "$ROOT_DIR/$mod/install.sh"
+  bash "$ROOT_DIR/modules/$mod/install.sh"
 done
 
 # Terminal cosmetics / fonts.
 for mod in fonts ghostty; do
   step "Installing $mod"
-  bash "$ROOT_DIR/$mod/install.sh"
+  bash "$ROOT_DIR/modules/$mod/install.sh"
 done
 
 echo ""

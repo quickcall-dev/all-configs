@@ -2,6 +2,8 @@
 
 Modular dotfiles and developer environment suite for macOS and Linux — editors, terminals, AI tools, and productivity apps.
 
+![all-configs TUI: search, multi-select, install with live output](docs/assets/demo.gif)
+
 ## Quick start
 
 ```bash
@@ -40,6 +42,17 @@ TUI tests use fake modules and a temporary `$HOME`, so they never touch the syst
 
 ```bash
 ./tests/run-tui-tests.sh
+```
+
+## Repo layout
+
+```
+install.sh        entry point: TUI, or ./install.sh <module>...
+modules/<name>/   one dir per module: module.toml, install.sh, its config files
+lib/              shared bash helpers (common.sh, uninstall.sh)
+allconfigs/       Python: module loading and detection, pty runner, tui/ (Textual)
+tests/tui/        TUI tests (fake modules, temp $HOME)
+docs/             experiments, plans, assets
 ```
 
 ## Modules
@@ -85,10 +98,10 @@ TUI tests use fake modules and a temporary `$HOME`, so they never touch the syst
 Each module can be installed directly:
 
 ```bash
-./nvim/install.sh
-./tmux/install.sh
-./zoxide/install.sh
-./fonts/install.sh
+./modules/nvim/install.sh
+./modules/tmux/install.sh
+./modules/zoxide/install.sh
+./modules/fonts/install.sh
 ```
 
 ### pi
@@ -96,7 +109,7 @@ Each module can be installed directly:
 Install the Pi coding agent, copy settings, and install package extensions:
 
 ```bash
-./pi/install.sh
+./modules/pi/install.sh
 ```
 
 Configured packages (in `pi/settings.json`):
@@ -108,7 +121,7 @@ Configured packages (in `pi/settings.json`):
 Install QuickCall skills and Pi system skills (everything under `skills/`):
 
 ```bash
-./skills/install.sh
+./modules/skills/install.sh
 ```
 
 To add a Pi system skill, drop it into the `skills/` folder and re-run the installer.
@@ -118,10 +131,10 @@ To add a Pi system skill, drop it into the `skills/` folder and re-run the insta
 Install `gh` and configure git without storing credentials:
 
 ```bash
-./github/install.sh -n "Sagar Sarkale" -e sagar@example.com
+./modules/github/install.sh -n "Sagar Sarkale" -e sagar@example.com
 
 # or with env vars
-GIT_NAME="Sagar Sarkale" GIT_EMAIL="sagar@example.com" ./github/install.sh
+GIT_NAME="Sagar Sarkale" GIT_EMAIL="sagar@example.com" ./modules/github/install.sh
 ```
 
 Then run `gh auth login` to authenticate.
@@ -134,7 +147,7 @@ directory-scoped git identity, and URL rewriting so every GitHub remote inside
 your work directory authenticates as the work account — even `https://` URLs:
 
 ```bash
-./multi-github/install.sh -p <personal-login> -w <work-login> -d "$HOME/work" \
+./modules/multi-github/install.sh -p <personal-login> -w <work-login> -d "$HOME/work" \
   -W "<id>+<work-login>@users.noreply.github.com"
 ```
 
@@ -155,10 +168,10 @@ this module fixes git pushes/authorship, not gh API calls.
 Generate an SSH key, add it to `~/.ssh/config`, and test GitHub authentication:
 
 ```bash
-./ssh-keygen/install.sh -e sagar@example.com -u sagar -H github.com
+./modules/ssh-keygen/install.sh -e sagar@example.com -u sagar -H github.com
 
 # For a different server
-./ssh-keygen/install.sh -e sagar@example.com -u sagar -H contabo.example.com -k id_ed25519_contabo
+./modules/ssh-keygen/install.sh -e sagar@example.com -u sagar -H contabo.example.com -k id_ed25519_contabo
 ```
 
 Copy the printed public key and add it to the target host.
@@ -176,7 +189,16 @@ If you cannot use passwordless sudo, run the relevant module as root or install 
 
 ## Adding a new module
 
-Create a directory with an `install.sh` and a `module.toml`:
+Create `modules/<name>/` with an `install.sh` and a `module.toml`. Scripts find
+the shared helpers from two levels up:
+
+```bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+source "$ROOT_DIR/lib/common.sh"
+```
+
+`module.toml`:
 
 ```toml
 name = "my-module"                       # must match the directory name

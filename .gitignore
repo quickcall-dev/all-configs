@@ -1,10 +1,10 @@
 *.cast
 *.log
 node_modules/
-tmux/node_modules/
-tmux/test-logs/
-tmux/test-tmux.sh
-tmux/tests/
+modules/tmux/node_modules/
+modules/tmux/test-logs/
+modules/tmux/test-tmux.sh
+modules/tmux/tests/
 this
 .vscode
 .worktrees/

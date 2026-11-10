@@ -9,6 +9,7 @@ set -e
 trap 'echo ""; fail "Interrupted"; exit 130' INT
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MODULES_DIR="$ROOT_DIR/modules"
 # common.sh exits on anything other than Darwin/Linux
 source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" >&2; exit 1; }
 
@@ -20,16 +21,16 @@ ensure_uv() {
     export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
     command -v uv &>/dev/null && return 0
 
-    [[ -f "$ROOT_DIR/uv/install.sh" ]] || { fail "uv not found and uv/install.sh missing"; exit 1; }
+    [[ -f "$MODULES_DIR/uv/install.sh" ]] || { fail "uv not found and modules/uv/install.sh missing"; exit 1; }
     step "uv not found — installing"
-    bash "$ROOT_DIR/uv/install.sh"
+    bash "$MODULES_DIR/uv/install.sh"
     command -v uv &>/dev/null || { fail "uv install finished but uv is not on PATH"; exit 1; }
     ok "uv installed ${D}$(command -v uv)${R}"
 }
 
 list_modules() {
     local toml name platforms
-    for toml in "$ROOT_DIR"/*/module.toml; do
+    for toml in "$MODULES_DIR"/*/module.toml; do
         name="$(basename "$(dirname "$toml")")"
         platforms="$(grep -E '^platforms' "$toml" || true)"
         if [[ "$platforms" == *"\"$PLATFORM\""* ]]; then echo "$name"; fi
@@ -51,13 +52,13 @@ esac
 if [[ $# -gt 0 ]]; then
     for mod in "$@"; do
         # module names are plain directory names; reject paths like ../x
-        if [[ ! "$mod" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || [[ ! -f "$ROOT_DIR/$mod/install.sh" ]]; then
+        if [[ ! "$mod" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || [[ ! -f "$MODULES_DIR/$mod/install.sh" ]]; then
             fail "Unknown module: $mod (see ./install.sh --list)"
             exit 1
         fi
     done
     for mod in "$@"; do
-        bash "$ROOT_DIR/$mod/install.sh"
+        bash "$MODULES_DIR/$mod/install.sh"
     done
     exit 0
 fi
@@ -70,4 +71,4 @@ fi
 
 ensure_uv
 cd "$ROOT_DIR"
-exec uv run --quiet --no-project --python "$PYTHON_VERSION" --with "$TEXTUAL_SPEC" python3 -m tui
+exec uv run --quiet --no-project --python "$PYTHON_VERSION" --with "$TEXTUAL_SPEC" python3 -m allconfigs
