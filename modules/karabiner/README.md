@@ -31,14 +31,15 @@ Karabiner watches the live config and reloads automatically (see `~/.local/share
 | Shortcut | Action |
 |----------|--------|
 | `Caps + B` | Open/switch to **Brave Browser** |
-| `Caps + C` | Open/switch to **Visual Studio Code** |
-| `Caps + D` | Open/switch to **Zed** |
+| `Caps + C` | Open/switch to **Claude** |
+| `Caps + D` | Open/switch to **Visual Studio Code** |
 | `Caps + F` | Open/switch to **Finder** |
 | `Caps + G` | Open/switch to **ChatGPT** |
 | `Caps + L` | Clear terminal (sends `Ctrl + L`) |
 | `Caps + M` | Open/switch to **WhatsApp** |
-| `Caps + N` | Open/switch to **Presentify** |
+| `Caps + N` | Open/switch to **Granola** |
 | `Caps + O` | Open/switch to **Obsidian** |
+| `Caps + P` | Open/switch to **Presentify** |
 | `Caps + S` | Open/switch to **Slack** |
 | `Caps + T` | Open/switch to **Ghostty** |
 | `Caps + W` | Open/switch to **WhatsApp Web** |

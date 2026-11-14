@@ -44,8 +44,12 @@ if [[ "$SCRIPT_DIR" != "$REPO_DEST" ]]; then
     ok "Repo synced"
 fi
 
-cp "$SRC_JSON" "$DEST_JSON"
-ok "karabiner.json installed"
+if [[ "$SRC_JSON" -ef "$DEST_JSON" ]]; then
+    ok "karabiner.json already linked to repo (live sync)"
+else
+    cp "$SRC_JSON" "$DEST_JSON"
+    ok "karabiner.json installed"
+fi
 
 open -a "Karabiner-Elements"
 ok "Karabiner-Elements relaunched"
