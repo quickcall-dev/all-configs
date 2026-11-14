@@ -32,8 +32,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
+        # not --frozen-lockfile: platform-specific native opentui binaries
+        # (linux glibc/musl) must resolve on each target
         working-directory: experimental/opentui
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Compile the TUI
         working-directory: experimental/opentui
