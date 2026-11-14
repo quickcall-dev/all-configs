@@ -10,8 +10,36 @@ import { dlopen, FFIType } from "bun:ffi"
 import { closeSync, openSync, writeSync } from "node:fs"
 import type { Module } from "./types"
 
+/**
+ * Where the all-configs repo lives. Resolution order:
+ *  1. $ALL_CONFIGS_ROOT (explicit override)
+ *  2. walk up from the executable / cwd looking for the repo markers
+ *     (modules/ + lib/common.sh) — finds the canonical install when the
+ *     released binary lives somewhere inside the repo
+ *  3. the dev layout: src/ -> experimental/opentui/ -> repo root
+ */
 export const REPO_ROOT = (() => {
-  // src/ -> experimental/opentui/ -> repo root
+  if (process.env.ALL_CONFIGS_ROOT) {
+    return process.env.ALL_CONFIGS_ROOT.replace(/\/$/, "")
+  }
+  const { readdirSync, existsSync } = require("node:fs") as typeof import("node:fs")
+  const { dirname, resolve } = require("node:path") as typeof import("node:path")
+  const isRepo = (dir: string) => {
+    try {
+      return existsSync(`${dir}/lib/common.sh`) && readdirSync(`${dir}/modules`).length > 0
+    } catch {
+      return false
+    }
+  }
+  const startPoints = [dirname(process.execPath), process.cwd(), import.meta.dir]
+  for (const start of startPoints) {
+    let dir = resolve(start)
+    for (let i = 0; i < 6 && dir !== "/"; i++) {
+      if (isRepo(dir)) return dir
+      dir = dirname(dir)
+    }
+  }
+  // dev fallback
   let dir = import.meta.dir
   for (let i = 0; i < 3; i++) dir = dir.substring(0, dir.lastIndexOf("/"))
   return dir

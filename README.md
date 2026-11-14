@@ -6,18 +6,33 @@ Modular dotfiles and developer environment suite for macOS and Linux — editors
 
 ## Quick start
 
+Install anywhere (one canonical clone at `~/.all-configs` + a single-binary TUI on PATH):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/quickcall-dev/all-configs/main/scripts/install.sh | sh
+all-configs        # the TUI
+```
+
+Re-running the installer updates the repo and the binary. Or work from a clone:
+
 ```bash
 git clone https://github.com/quickcall-dev/all-configs.git
 cd all-configs
 
-# Interactive Textual TUI — search, select, install
+# Interactive TUI (OpenTUI + Bun)
 ./install.sh
 
 # Or install specific modules directly
 ./install.sh nvim tmux zoxide github ssh-keygen
 ```
 
-The TUI is built with [Textual](https://textual.textualize.io/). It uses [uv](https://docs.astral.sh/uv/) to provision its Python environment.
+The TUI is the [OpenTUI](https://opentui.com) rewrite in `experimental/opentui/`
+(compiled to a standalone binary for releases). The original Textual TUI is
+archived in `archive/textual-tui/`. Module detection streams through
+`allconfigs/probe.py` via [uv](https://docs.astral.sh/uv/).
+
+Releases: push a `v*` tag and CI builds `all-configs-tui-<os>-<arch>` binaries
+(see `.github/workflows/release.yml`).
 
 Keys inside the TUI:
 

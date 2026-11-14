@@ -14,7 +14,6 @@ MODULES_DIR="$ROOT_DIR/modules"
 source "$ROOT_DIR/lib/common.sh" || { echo "Error: lib/common.sh not found" >&2; exit 1; }
 
 PYTHON_VERSION="3.12"
-TEXTUAL_SPEC="textual==8.2.*"
 
 ensure_uv() {
     # uv may already be installed but not on PATH in this shell
@@ -71,4 +70,5 @@ fi
 
 ensure_uv
 cd "$ROOT_DIR"
-exec uv run --quiet --no-project --python "$PYTHON_VERSION" --with "$TEXTUAL_SPEC" python3 -m allconfigs
+# The OpenTUI TUI runs on Bun; __main__ locates it and hands off.
+exec uv run --quiet --no-project --python "$PYTHON_VERSION" python3 -m allconfigs

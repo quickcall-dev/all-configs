@@ -39,7 +39,6 @@ Karabiner watches the live config and reloads automatically (see `~/.local/share
 | `Caps + M` | Open/switch to **WhatsApp** |
 | `Caps + N` | Open/switch to **Granola** |
 | `Caps + O` | Open/switch to **Obsidian** |
-| `Caps + P` | Open/switch to **Presentify** |
 | `Caps + S` | Open/switch to **Slack** |
 | `Caps + T` | Open/switch to **Ghostty** |
 | `Caps + W` | Open/switch to **WhatsApp Web** |
