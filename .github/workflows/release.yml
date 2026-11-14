@@ -33,9 +33,20 @@ jobs:
 
       - name: Install dependencies
         # not --frozen-lockfile: platform-specific native opentui binaries
-        # (linux glibc/musl) must resolve on each target
+        # must resolve on each target
         working-directory: experimental/opentui
         run: bun install
+
+      - name: Install musl native lib
+        # bun's compiled linux executables are musl-linked, and @opentui/core
+        # resolves its native package from the runtime libc — which is glibc
+        # on the runner. Install the musl variant the compiled binary needs.
+        if: runner.os == 'Linux'
+        working-directory: experimental/opentui
+        run: |
+          arch="$(uname -m)"
+          [ "$arch" = "x86_64" ] && arch="x64"
+          bun add --dev "@opentui/core-linux-${arch}-musl"
 
       - name: Compile the TUI
         working-directory: experimental/opentui
