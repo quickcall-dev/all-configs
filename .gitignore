@@ -11,3 +11,9 @@ this
 __pycache__/
 ._*
 .DS_Store
+
+# agent skill installers (npx skills add …)
+.agents/
+.claude/
+.openhands/
+skills-lock.json
