@@ -53,11 +53,13 @@ Installers run in a pseudo-terminal. When one asks for input (`sudo` password,
 and are never logged. Every run writes
 a log to `~/.local/state/all-configs/logs/`.
 
-TUI tests use fake modules and a temporary `$HOME`, so they never touch the system:
+TUI tests live with the app and never touch the system:
 
 ```bash
-./tests/run-tui-tests.sh
+cd experimental/opentui && bun test
 ```
+
+(The archived Textual TUI keeps its own pytest suite under `archive/textual-tui/`.)
 
 ## Repo layout
 
@@ -65,10 +67,18 @@ TUI tests use fake modules and a temporary `$HOME`, so they never touch the syst
 install.sh        entry point: TUI, or ./install.sh <module>...
 modules/<name>/   one dir per module: module.toml, install.sh, its config files
 lib/              shared bash helpers (common.sh, uninstall.sh)
-allconfigs/       Python: module loading and detection, pty runner, tui/ (Textual)
-tests/tui/        TUI tests (fake modules, temp $HOME)
-docs/             experiments, plans, assets
+allconfigs/       Python: module loading/detection + NDJSON probe for the TUI
+experimental/     OpenTUI TUI (Bun + @opentui/react); `bun run start` in opentui/
+archive/          retired code kept for reuse (textual-tui/ — the original TUI)
+scripts/          install.sh — the curl | sh installer for releases
+docs/             experiments, plans, releasing notes, assets
 ```
+
+## Releases
+
+Push a `v*` tag and CI publishes `all-configs-tui-<os>-<arch>` binaries to a
+GitHub Release; `curl …/scripts/install.sh | sh` installs/updates from it.
+Full process: [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Modules
 

@@ -10,6 +10,21 @@ bun install     # first time only
 bun run start   # or: bun run src/index.tsx
 ```
 
+## Release binary
+
+`bun build --compile` produces a standalone executable (runtime + native
+library embedded, ~100 MB). The repo root is resolved from `$ALL_CONFIGS_ROOT`,
+then by walking up from the executable to the repo markers — so a released
+binary dropped in `<repo>/bin/` just works:
+
+```bash
+bun build --compile --target=bun-darwin-arm64 src/index.tsx --outfile ac-tui
+ALL_CONFIGS_ROOT=/path/to/all-configs ./ac-tui
+```
+
+Release builds run in CI (see `docs/RELEASING.md` and
+`.github/workflows/release.yml`).
+
 ## Test
 
 ```bash
