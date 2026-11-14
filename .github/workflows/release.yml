@@ -45,7 +45,10 @@ jobs:
         working-directory: experimental/opentui
         run: |
           arch="$(uname -m)"
-          [ "$arch" = "x86_64" ] && arch="x64"
+          case "$arch" in
+            x86_64) arch="x64" ;;
+            aarch64) arch="arm64" ;;
+          esac
           bun add --dev "@opentui/core-linux-${arch}-musl"
 
       - name: Compile the TUI
@@ -54,7 +57,11 @@ jobs:
           bun build --compile --target=${{ matrix.target }}
           src/index.tsx --outfile ${{ matrix.asset }}
 
+      - name: Compress (the embedded runtime shrinks ~3x)
+        working-directory: experimental/opentui
+        run: gzip -9 -c ${{ matrix.asset }} > ${{ matrix.asset }}.gz
+
       - name: Upload asset
         uses: softprops/action-gh-release@v2
         with:
-          files: experimental/opentui/${{ matrix.asset }}
+          files: experimental/opentui/${{ matrix.asset }}.gz

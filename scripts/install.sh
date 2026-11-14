@@ -36,12 +36,12 @@ install_binary() {
   os="$(uname -s | tr '[:upper:]' '[:lower:]')"   # darwin | linux
   arch="$(uname -m)"                              # arm64 | x86_64
   [[ "$arch" == "x86_64" ]] && arch="x64"
-  asset="all-configs-tui-${os}-${arch}"
+  asset="all-configs-tui-${os}-${arch}.gz"
   url="$GITHUB/releases/latest/download/$asset"
 
   say "downloading $asset"
   mkdir -p "$DIR/bin"
-  curl -fsSL --retry 2 -o "$DIR/bin/all-configs-tui" "$url" || return 1
+  curl -fsSL --retry 2 "$url" | gunzip > "$DIR/bin/all-configs-tui" || return 1
   chmod +x "$DIR/bin/all-configs-tui"
 
   mkdir -p "$BIN_DIR"

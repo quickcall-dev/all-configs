@@ -31,6 +31,9 @@ Version numbers are plain semver tags; the `v` prefix is required.
 the Bun runtime and OpenTUI's native library are embedded, so the target
 machine needs nothing but the binary, `uv` (module detection), and the repo
 (modules + install scripts) which the installer clones to `~/.all-configs`.
+The app code is under 1 MB; the ~100 MB is the embedded JS runtime. Assets
+are gzip-compressed (`-9`, roughly 3x smaller) and decompressed by the
+installer.
 
 The binary finds the repo by, in order:
 
