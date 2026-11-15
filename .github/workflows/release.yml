@@ -38,14 +38,26 @@ jobs:
 
       - name: Install dependencies
         # Do not use --frozen-lockfile: each cross-target build needs its own
-        # optional OpenTUI native package.
-        working-directory: experimental/opentui
+        # optional OpenTUI native package. Bun skips linking native packages
+        # whose platform doesn't match the host (e.g. darwin-x64 on an
+        # arm64 runner), so extract the target's package tarball manually at
+        # the exact version @opentui/core depends on.
+        working-directory: cli
         run: |
           bun install
-          bun add --dev "${{ matrix.native_package }}"
+          version="$(node -p "require('./node_modules/@opentui/core/package.json').version")"
+          tgz="$(npm pack "${{ matrix.native_package }}@$version" | tail -1)"
+          dir="node_modules/${{ matrix.native_package }}"
+          rm -rf "$dir"
+          mkdir -p "$dir"
+          tar -xzf "$tgz" -C "$dir" --strip-components=1
+          rm "$tgz"
 
       - name: Compile the TUI
-        working-directory: experimental/opentui
+        working-directory: cli
+        env:
+          # Baked into the binary: `all-configs --version` reports it.
+          ALL_CONFIGS_VERSION: ${{ github.ref_name }}
         run: >
           bun run build-release.ts
           ${{ matrix.target }} ${{ matrix.asset }}
@@ -53,23 +65,23 @@ jobs:
 
       - name: Smoke test host-native executable
         if: matrix.target == 'bun-darwin-arm64' || matrix.target == 'bun-linux-x64' || matrix.target == 'bun-linux-arm64'
-        working-directory: experimental/opentui
+        working-directory: cli
         run: test -x "${{ matrix.asset }}"
 
       - name: Compress GitHub release asset
-        working-directory: experimental/opentui
+        working-directory: cli
         run: gzip -9 -c ${{ matrix.asset }} > ${{ matrix.asset }}.gz
 
       - name: Upload GitHub release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: experimental/opentui/${{ matrix.asset }}.gz
+          files: cli/${{ matrix.asset }}.gz
 
       - name: Upload binary for npm packaging
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset }}
-          path: experimental/opentui/${{ matrix.asset }}
+          path: cli/${{ matrix.asset }}
           if-no-files-found: error
 
   publish-npm:
