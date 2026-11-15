@@ -1,6 +1,7 @@
 export {}
 
 const [target, outfile, libc] = process.argv.slice(2)
+const version = process.env.ALL_CONFIGS_VERSION ?? "dev"
 
 if (!target || !outfile) {
   console.error("usage: bun run build-release.ts <target> <outfile> [glibc|musl]")
@@ -13,9 +14,10 @@ const result = await Bun.build({
     target: target as any,
     outfile,
   },
-  ...(libc
-    ? { define: { "process.env.OPENTUI_LIBC": JSON.stringify(libc) } }
-    : {}),
+  define: {
+    "process.env.OPENTUI_LIBC": JSON.stringify(libc ?? ""),
+    "process.env.ALL_CONFIGS_VERSION": JSON.stringify(version),
+  },
 })
 
 if (!result.success) {

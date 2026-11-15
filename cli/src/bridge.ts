@@ -16,7 +16,7 @@ import type { Module } from "./types"
  *  2. walk up from the executable / cwd looking for the repo markers
  *     (modules/ + lib/common.sh) — finds the canonical install when the
  *     released binary lives somewhere inside the repo
- *  3. the dev layout: src/ -> experimental/opentui/ -> repo root
+ *  3. the dev layout: src/ -> cli/ -> repo root
  */
 export const REPO_ROOT = (() => {
   if (process.env.ALL_CONFIGS_ROOT) {

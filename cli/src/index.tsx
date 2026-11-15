@@ -3,6 +3,13 @@ import { createRoot } from "@opentui/react"
 import { App } from "./App"
 import { REPO_ROOT } from "./bridge"
 import { theme } from "./theme"
+import { VERSION } from "./version"
+
+const arg = process.argv[2]
+if (arg === "--version" || arg === "-v" || arg === "version") {
+  console.log(`all-configs ${VERSION}`)
+  process.exit(0)
+}
 
 if (!process.stdin.isTTY || !process.stdout.isTTY) {
   console.error("all-configs TUI (opentui) needs an interactive terminal")

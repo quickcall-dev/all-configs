@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import { testRender } from "@opentui/react/test-utils"
-import { ConfirmDialog } from "/Users/sagar/all-configs/experimental/opentui/src/screens/ConfirmDialog"
+import { ConfirmDialog } from "/Users/sagar/all-configs/cli/src/screens/ConfirmDialog"
 
 const mod = {
   name: "aliases", description: "", kind: "config", platforms: ["mac"],

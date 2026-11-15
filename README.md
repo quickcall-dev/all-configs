@@ -40,7 +40,7 @@ cd all-configs
 ./install.sh nvim tmux zoxide github ssh-keygen
 ```
 
-The TUI is the [OpenTUI](https://opentui.com) rewrite in `experimental/opentui/`
+The TUI is the [OpenTUI](https://opentui.com) rewrite in `cli/`
 (compiled to a standalone binary for releases). The original Textual TUI is
 archived in `archive/textual-tui/`. Module detection streams through
 `allconfigs/probe.py` via [uv](https://docs.astral.sh/uv/).
@@ -71,7 +71,7 @@ a log to `~/.local/state/all-configs/logs/`.
 TUI tests live with the app and never touch the system:
 
 ```bash
-cd experimental/opentui && bun test
+cd cli && bun test
 ```
 
 (The archived Textual TUI keeps its own pytest suite under `archive/textual-tui/`.)
@@ -83,7 +83,7 @@ install.sh        entry point: TUI, or ./install.sh <module>...
 modules/<name>/   one dir per module: module.toml, install.sh, its config files
 lib/              shared bash helpers (common.sh, uninstall.sh)
 allconfigs/       Python: module loading/detection + NDJSON probe for the TUI
-experimental/     OpenTUI TUI (Bun + @opentui/react); `bun run start` in opentui/
+cli/              OpenTUI TUI (Bun + @opentui/react); `bun run start` in cli/
 archive/          retired code kept for reuse (textual-tui/ — the original TUI)
 scripts/          install.sh — the curl | sh installer for releases
 docs/             experiments, plans, releasing notes, assets

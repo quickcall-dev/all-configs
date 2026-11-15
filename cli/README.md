@@ -1,11 +1,13 @@
-# all-configs TUI — OpenTUI experiment
+# all-configs TUI — OpenTUI CLI
 
-A reimplementation of the all-configs TUI ([`allconfigs/tui/`](../../allconfigs/tui/), Textual) using [OpenTUI](https://opentui.com) with the React bindings. The Textual TUI is untouched; this lives side-by-side as an experiment.
+The all-configs TUI, built with [OpenTUI](https://opentui.com) and the React
+bindings. The original Textual TUI is archived under
+[`archive/textual-tui/`](../../archive/textual-tui/).
 
 ## Run
 
 ```bash
-cd experimental/opentui
+cd cli
 bun install     # first time only
 bun run start   # or: bun run src/index.tsx
 ```

@@ -47,6 +47,9 @@ install_binary() {
   mkdir -p "$BIN_DIR"
   ln -sfn "$DIR/bin/all-configs-tui" "$BIN_DIR/all-configs"
   say "linked $BIN_DIR/all-configs"
+  if version_out="$("$DIR/bin/all-configs-tui" --version 2>/dev/null)"; then
+    say "installed $version_out"
+  fi
 }
 
 if [[ "${SKIP_BINARY:-0}" != "1" ]]; then

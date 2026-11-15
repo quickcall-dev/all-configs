@@ -1,6 +1,6 @@
 """Entry point for all-configs.
 
-The interactive TUI is the OpenTUI rewrite (``experimental/opentui``); the
+The interactive TUI is the OpenTUI rewrite in ``cli/``; the
 original Textual TUI is archived under ``archive/textual-tui/``. This module
 locates Bun and hands off to the TypeScript app so both
 ``python3 -m allconfigs`` and ``./install.sh`` keep working.
@@ -23,7 +23,7 @@ def main() -> int:
     bun = shutil.which("bun")
     if bun:
         os.chdir(root)
-        os.execvp(bun, [bun, "run", "experimental/opentui/src/index.tsx"])
+        os.execvp(bun, [bun, "run", "cli/src/index.tsx"])
 
     # No Bun: fall back to guidance; the platform check needs 3.11+ (tomllib).
     from allconfigs.modules import PLATFORM

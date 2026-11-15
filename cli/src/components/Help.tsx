@@ -1,4 +1,5 @@
 import { theme } from "../theme"
+import { VERSION } from "../version"
 import { MiniWordmark } from "./Wordmark"
 
 interface Entry {
@@ -82,7 +83,7 @@ export function HelpView() {
         <Group {...GROUPS[3]} />
       </box>
       <box style={{ flexGrow: 1 }} />
-      <text fg={theme.muted}>  esc · q · ?    back to the modules</text>
+      <text fg={theme.muted}>  v{VERSION}    esc · q · ?    back to the modules</text>
       <box style={{ height: 1 }} />
     </box>
   )

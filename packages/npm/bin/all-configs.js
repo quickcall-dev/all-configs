@@ -5,6 +5,13 @@ const { dirname, join, resolve } = require("node:path")
 
 const platform = process.platform
 const arch = process.arch
+
+const arg = process.argv[2]
+if (arg === "--version" || arg === "-v" || arg === "version") {
+  console.log(`all-configs ${require("../package.json").version}`)
+  process.exit(0)
+}
+
 const key = `${platform}-${arch}`
 const packages = {
   "darwin-arm64": "@quickcall/all-configs-darwin-arm64",

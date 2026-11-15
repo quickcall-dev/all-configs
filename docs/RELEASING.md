@@ -28,11 +28,14 @@ Release + npm platform packages → users run `npx @quickcall/all-configs`.**
 The repository must have an npm automation token stored as the GitHub Actions
 secret `NPM_TOKEN`. The token needs publish access to the `@quickcall` scope.
 
-Version numbers are plain semver tags; the `v` prefix is required.
+Version numbers are plain semver tags; the `v` prefix is required. The tag is
+baked into each binary at build time (`ALL_CONFIGS_VERSION`), so
+`all-configs --version` (and the `?` help screen) reports exactly what is
+installed; the npm launcher answers `--version` from its own `package.json`.
 
 ## What the binary is
 
-`experimental/opentui/src/index.tsx` compiled by `bun build --compile` —
+`cli/src/index.tsx` compiled by `bun build --compile` —
 the Bun runtime and OpenTUI's native library are embedded, so the target
 machine needs nothing but the binary, `uv` (module detection), and the repo
 (modules + install scripts) which the installer clones to `~/.all-configs`.
@@ -51,9 +54,9 @@ The binary finds the repo by, in order:
 Build locally:
 
 ```bash
-cd experimental/opentui
+cd cli
 bun run build-release.ts bun-darwin-arm64 ac-tui
-ALL_CONFIGS_ROOT=/path/to/repo ./ac-tui
+ALL_CONFIGS_VERSION=dev ALL_CONFIGS_ROOT=/path/to/repo ./ac-tui
 ```
 
 Prepare npm packages from a directory of release binaries:
@@ -65,5 +68,5 @@ scripts/prepare-npm-packages.sh 1.1.0 /path/to/binaries /tmp/npm-packages
 ## Test a release before tagging
 
 The same command the CI runs works locally (see above), and
-`experimental/opentui/test` (`bun test`) covers the app end to end,
+`cli/test` (`bun test`) covers the app end to end,
 including a real install through the run screen.
