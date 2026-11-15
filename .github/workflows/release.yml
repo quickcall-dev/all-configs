@@ -95,17 +95,8 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: Download platform binaries
-        uses: actions/download-artifact@v4
-        with:
-          pattern: all-configs-tui-*
-          path: npm-binaries
-          merge-multiple: true
-
-      - name: Prepare npm packages
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          scripts/prepare-npm-packages.sh "$version" npm-binaries npm-packages
+      - name: Prepare npm package
+        run: scripts/prepare-npm-packages.sh "${GITHUB_REF_NAME#v}" npm-package
 
       - name: Verify npm authentication
         # E404 on publish PUT usually means the token lacks publish access
@@ -119,23 +110,7 @@ jobs:
           npm whoami
           echo "token sha256: $(printf '%s' "$NODE_AUTH_TOKEN" | sha256sum | cut -d' ' -f1)"
 
-      - name: Publish npm packages
+      - name: Publish npm package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          set -euo pipefail
-          publish_if_missing() {
-            dir="$1"
-            name="$(node -p "require('./$dir/package.json').name")"
-            version="$(node -p "require('./$dir/package.json').version")"
-            if npm view "$name@$version" version >/dev/null 2>&1; then
-              echo "$name@$version already published"
-            else
-              npm publish "./$dir" --access public --provenance
-            fi
-          }
-
-          for dir in npm-packages/darwin-* npm-packages/linux-*; do
-            publish_if_missing "$dir"
-          done
-          publish_if_missing npm-packages/main
+        run: npm publish ./npm-package --access public --provenance

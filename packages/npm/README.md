@@ -6,7 +6,10 @@ Run the all-configs terminal UI without installing Bun:
 npx @quickcall/all-configs
 ```
 
-The package selects a precompiled Bun/OpenTUI executable for the current platform. The executable contains the runtime; Bun is not required on the user's machine.
+On install (and on first run, if needed) the package downloads the matching
+precompiled Bun/OpenTUI executable for your platform from the GitHub Release
+and caches it. The executable contains the runtime; Bun is not required on
+the user's machine.
 
 Supported platforms:
 

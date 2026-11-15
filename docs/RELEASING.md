@@ -17,10 +17,12 @@ Release + npm platform packages → users run `npx @quickcall/all-configs`.**
    (darwin-arm64/x64, linux-x64/arm64): installs the matching OpenTUI native
    package, compiles the TUI with `bun build --compile`, and attaches each
    compressed binary to a GitHub Release.
-4. CI packages each uncompressed binary as an OS/CPU-restricted npm package,
-   then publishes `@quickcall/all-configs`, whose tiny Node launcher selects
-   the matching optional dependency. Users run `npx @quickcall/all-configs`;
-   Bun is embedded and is not required on their machine.
+4. CI packages the npm release — a **single** `@quickcall/all-configs`
+   package (launcher + module runtime). No per-platform npm packages: the
+   launcher downloads `all-configs-tui-<os>-<arch>` from the matching
+   GitHub Release on install (postinstall) or first run and caches it.
+   Users run `npx @quickcall/all-configs`; Bun is embedded and is not
+   required on their machine.
 5. `scripts/install.sh` remains supported and downloads
    `releases/latest/download/all-configs-tui-<os>-<arch>`. Re-running it on an
    installed machine upgrades the canonical clone and binary.
@@ -62,7 +64,7 @@ ALL_CONFIGS_VERSION=dev ALL_CONFIGS_ROOT=/path/to/repo ./ac-tui
 Prepare npm packages from a directory of release binaries:
 
 ```bash
-scripts/prepare-npm-packages.sh 1.1.0 /path/to/binaries /tmp/npm-packages
+scripts/prepare-npm-packages.sh 1.1.0 /tmp/npm-package
 ```
 
 ## Test a release before tagging
