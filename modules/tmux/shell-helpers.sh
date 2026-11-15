@@ -28,3 +28,6 @@ tmux() {
     esac
     command tmux "$@"
 }
+
+# tt: attach to the most recent session, or pick one interactively
+alias tt='tmux attach \; choose-tree -Zw'
