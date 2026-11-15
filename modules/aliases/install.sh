@@ -10,17 +10,16 @@ step "Installing shell aliases"
 SRC="$SCRIPT_DIR/aliases.sh"
 DEST="$HOME/.aliases"
 
-# Symlink ~/.aliases -> repo file
-if [[ -L "$DEST" && "$(readlink "$DEST")" == "$SRC" ]]; then
-    ok "~/.aliases already linked"
-else
-    if [[ -e "$DEST" && ! -L "$DEST" ]]; then
-        warn "Existing ~/.aliases found — backing up to ~/.aliases.bak"
-        mv "$DEST" "$DEST.bak"
-    fi
-    ln -sfn "$SRC" "$DEST"
-    ok "~/.aliases → $SRC"
+# Copy (not symlink) to a stable per-user file: ~/.aliases must not point
+# into the repo, which may live in an npm runtime dir under a temp path.
+if [[ -L "$DEST" ]]; then
+    rm "$DEST"
+elif [[ -e "$DEST" ]]; then
+    warn "Existing ~/.aliases found — backing up to ~/.aliases.bak"
+    mv "$DEST" "$DEST.bak"
 fi
+cp "$SRC" "$DEST"
+ok "~/.aliases installed (copy)"
 
 # Make sure the shell sources it
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do

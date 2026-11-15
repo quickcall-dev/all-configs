@@ -33,13 +33,30 @@ backup_file "$LOCAL_DEST"
 ln -sf "$OMT_DIR/.tmux.conf" "$CONF_DEST"
 ok "tmux.conf ${D}→ ~/.tmux.conf (symlinked to oh-my-tmux)${R}"
 
-ln -sf "$SCRIPT_DIR/.tmux.conf.local" "$LOCAL_DEST"
-ok ".tmux.conf.local ${D}→ ~/.tmux.conf.local (symlinked)${R}"
+if [[ -L "$LOCAL_DEST" ]]; then
+    # migrate a symlink (possibly pointing into a since-deleted repo path,
+    # e.g. an npm runtime dir) to a stable regular file
+    rm "$LOCAL_DEST"
+    cp "$SCRIPT_DIR/.tmux.conf.local" "$LOCAL_DEST"
+    ok ".tmux.conf.local ${D}→ ~/.tmux.conf.local (copied — user edits are safe)${R}"
+elif [[ -e "$LOCAL_DEST" ]]; then
+    ok ".tmux.conf.local kept (existing file)${R}"
+else
+    cp "$SCRIPT_DIR/.tmux.conf.local" "$LOCAL_DEST"
+    ok ".tmux.conf.local ${D}→ ~/.tmux.conf.local (copied)${R}"
+fi
 
 # ─── Shell helpers (auto-name tmux sessions from CWD) ───
+# Copy to a stable per-user location: rc files must not reference the repo
+# (which may live in an npm runtime dir under a temp path).
 
 HELPERS_SRC="$SCRIPT_DIR/shell-helpers.sh"
-SNIPPET="[ -f \"$HELPERS_SRC\" ] && source \"$HELPERS_SRC\"  # claude-config tmux helpers"
+HELPERS_DEST="${XDG_CONFIG_HOME:-$HOME/.config}/all-configs/tmux-shell-helpers.sh"
+mkdir -p "$(dirname "$HELPERS_DEST")"
+cp "$HELPERS_SRC" "$HELPERS_DEST"
+ok "shell helpers ${D}→ $HELPERS_DEST${R}"
+
+SNIPPET="[ -f \"$HELPERS_DEST\" ] && source \"$HELPERS_DEST\"  # claude-config tmux helpers"
 
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
