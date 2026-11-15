@@ -43,12 +43,14 @@ SNIPPET="[ -f \"$HELPERS_SRC\" ] && source \"$HELPERS_SRC\"  # claude-config tmu
 
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
     [[ -f "$rc" ]] || continue
-    if ! grep -Fq "claude-config tmux helpers" "$rc" 2>/dev/null; then
-        printf '\n%s\n' "$SNIPPET" >> "$rc"
-        ok "shell helpers ${D}→ $(basename "$rc")${R}"
-    else
-        ok "shell helpers already in $(basename "$rc")"
-    fi
+    # Replace stale paths from older repo layouts instead of treating any
+    # marker as current.
+    tmp="$(mktemp)"
+    grep -Fv "claude-config tmux helpers" "$rc" > "$tmp" || true
+    cat "$tmp" > "$rc"
+    rm -f "$tmp"
+    printf '\n%s\n' "$SNIPPET" >> "$rc"
+    ok "shell helpers ${D}→ $(basename "$rc")${R}"
 done
 
 echo ""
