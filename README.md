@@ -6,14 +6,28 @@ Modular dotfiles and developer environment suite for macOS and Linux — editors
 
 ## Quick start
 
-Install anywhere (one canonical clone at `~/.all-configs` + a single-binary TUI on PATH):
+Run directly through npm (no Bun installation required):
+
+```bash
+npx @quickcall/all-configs
+```
+
+Or install a persistent `all-configs` command:
+
+```bash
+npm install -g @quickcall/all-configs
+all-configs
+```
+
+The npm package selects the precompiled binary for the user's platform and
+includes the module definitions used by the TUI. The curl installer remains
+available for a canonical clone at `~/.all-configs`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/quickcall-dev/all-configs/main/scripts/install.sh | sh
-all-configs        # the TUI
 ```
 
-Re-running the installer updates the repo and the binary. Or work from a clone:
+Re-running the curl installer updates the repo and binary. Or work from a clone:
 
 ```bash
 git clone https://github.com/quickcall-dev/all-configs.git
@@ -31,8 +45,9 @@ The TUI is the [OpenTUI](https://opentui.com) rewrite in `experimental/opentui/`
 archived in `archive/textual-tui/`. Module detection streams through
 `allconfigs/probe.py` via [uv](https://docs.astral.sh/uv/).
 
-Releases: push a `v*` tag and CI builds `all-configs-tui-<os>-<arch>` binaries
-(see `.github/workflows/release.yml`).
+Releases: push a `v*` tag and CI builds `all-configs-tui-<os>-<arch>` binaries,
+attaches them to GitHub Releases, and publishes `@quickcall/all-configs` plus
+its platform packages to npm (see `.github/workflows/release.yml`).
 
 Keys inside the TUI:
 
@@ -77,8 +92,9 @@ docs/             experiments, plans, releasing notes, assets
 ## Releases
 
 Push a `v*` tag and CI publishes `all-configs-tui-<os>-<arch>` binaries to a
-GitHub Release; `curl …/scripts/install.sh | sh` installs/updates from it.
-Full process: [docs/RELEASING.md](docs/RELEASING.md).
+GitHub Release and npm platform packages consumed by `@quickcall/all-configs`.
+The curl installer remains supported. Full process:
+[docs/RELEASING.md](docs/RELEASING.md).
 
 ## Modules
 

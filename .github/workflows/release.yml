@@ -15,15 +15,19 @@ jobs:
         include:
           - os: macos-15
             target: bun-darwin-arm64
+            native_package: "@opentui/core-darwin-arm64"
             asset: all-configs-tui-darwin-arm64
-          - os: macos-13
+          - os: macos-15
             target: bun-darwin-x64
+            native_package: "@opentui/core-darwin-x64"
             asset: all-configs-tui-darwin-x64
           - os: ubuntu-latest
             target: bun-linux-x64
+            native_package: "@opentui/core-linux-x64-musl"
             asset: all-configs-tui-linux-x64
           - os: ubuntu-24.04-arm
             target: bun-linux-arm64
+            native_package: "@opentui/core-linux-arm64-musl"
             asset: all-configs-tui-linux-arm64
     runs-on: ${{ matrix.os }}
     steps:
@@ -32,36 +36,81 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        # not --frozen-lockfile: platform-specific native opentui binaries
-        # must resolve on each target
-        working-directory: experimental/opentui
-        run: bun install
-
-      - name: Install musl native lib
-        # bun's compiled linux executables are musl-linked, and @opentui/core
-        # resolves its native package from the runtime libc — which is glibc
-        # on the runner. Install the musl variant the compiled binary needs.
-        if: runner.os == 'Linux'
+        # Do not use --frozen-lockfile: each cross-target build needs its own
+        # optional OpenTUI native package.
         working-directory: experimental/opentui
         run: |
-          arch="$(uname -m)"
-          case "$arch" in
-            x86_64) arch="x64" ;;
-            aarch64) arch="arm64" ;;
-          esac
-          bun add --dev "@opentui/core-linux-${arch}-musl"
+          bun install
+          bun add --dev "${{ matrix.native_package }}"
 
       - name: Compile the TUI
         working-directory: experimental/opentui
         run: >
-          bun build --compile --target=${{ matrix.target }}
-          src/index.tsx --outfile ${{ matrix.asset }}
+          bun run build-release.ts
+          ${{ matrix.target }} ${{ matrix.asset }}
+          ${{ runner.os == 'Linux' && 'musl' || '' }}
 
-      - name: Compress (the embedded runtime shrinks ~3x)
+      - name: Smoke test host-native executable
+        if: matrix.target == 'bun-darwin-arm64' || matrix.target == 'bun-linux-x64' || matrix.target == 'bun-linux-arm64'
+        working-directory: experimental/opentui
+        run: test -x "${{ matrix.asset }}"
+
+      - name: Compress GitHub release asset
         working-directory: experimental/opentui
         run: gzip -9 -c ${{ matrix.asset }} > ${{ matrix.asset }}.gz
 
-      - name: Upload asset
+      - name: Upload GitHub release asset
         uses: softprops/action-gh-release@v2
         with:
           files: experimental/opentui/${{ matrix.asset }}.gz
+
+      - name: Upload binary for npm packaging
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: experimental/opentui/${{ matrix.asset }}
+          if-no-files-found: error
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Download platform binaries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: all-configs-tui-*
+          path: npm-binaries
+          merge-multiple: true
+
+      - name: Prepare npm packages
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          scripts/prepare-npm-packages.sh "$version" npm-binaries npm-packages
+
+      - name: Publish npm packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          publish_if_missing() {
+            dir="$1"
+            name="$(node -p "require('./$dir/package.json').name")"
+            version="$(node -p "require('./$dir/package.json').version")"
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version already published"
+            else
+              npm publish "./$dir" --access public --provenance
+            fi
+          }
+
+          for dir in npm-packages/darwin-* npm-packages/linux-*; do
+            publish_if_missing "$dir"
+          done
+          publish_if_missing npm-packages/main

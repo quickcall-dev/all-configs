@@ -1,7 +1,7 @@
 # Releasing
 
 How all-configs ships. TL;DR: **push a `v*` tag → CI builds binaries → GitHub
-Release → installers fetch from `releases/latest/download/`.**
+Release + npm platform packages → users run `npx @quickcall/all-configs`.**
 
 ## The flow
 
@@ -14,14 +14,19 @@ Release → installers fetch from `releases/latest/download/`.**
    ```
 
 3. `.github/workflows/release.yml` runs a matrix build
-   (darwin-arm64/x64, linux-x64/arm64): installs deps, compiles the TUI with
-   `bun build --compile`, and attaches each binary to a GitHub Release for
-   that tag. The release appears at
-   `https://github.com/quickcall-dev/all-configs/releases`.
-4. `scripts/install.sh` downloads
-   `releases/latest/download/all-configs-tui-<os>-<arch>`, so every new
-   release becomes the default for new installs automatically. Re-running
-   the installer on an installed machine upgrades it.
+   (darwin-arm64/x64, linux-x64/arm64): installs the matching OpenTUI native
+   package, compiles the TUI with `bun build --compile`, and attaches each
+   compressed binary to a GitHub Release.
+4. CI packages each uncompressed binary as an OS/CPU-restricted npm package,
+   then publishes `@quickcall/all-configs`, whose tiny Node launcher selects
+   the matching optional dependency. Users run `npx @quickcall/all-configs`;
+   Bun is embedded and is not required on their machine.
+5. `scripts/install.sh` remains supported and downloads
+   `releases/latest/download/all-configs-tui-<os>-<arch>`. Re-running it on an
+   installed machine upgrades the canonical clone and binary.
+
+The repository must have an npm automation token stored as the GitHub Actions
+secret `NPM_TOKEN`. The token needs publish access to the `@quickcall` scope.
 
 Version numbers are plain semver tags; the `v` prefix is required.
 
@@ -47,8 +52,14 @@ Build locally:
 
 ```bash
 cd experimental/opentui
-bun build --compile --target=bun-darwin-arm64 src/index.tsx --outfile ac-tui
+bun run build-release.ts bun-darwin-arm64 ac-tui
 ALL_CONFIGS_ROOT=/path/to/repo ./ac-tui
+```
+
+Prepare npm packages from a directory of release binaries:
+
+```bash
+scripts/prepare-npm-packages.sh 1.1.0 /path/to/binaries /tmp/npm-packages
 ```
 
 ## Test a release before tagging
