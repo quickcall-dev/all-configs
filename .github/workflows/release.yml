@@ -24,11 +24,11 @@ jobs:
             asset: all-configs-tui-darwin-x64
           - os: ubuntu-latest
             target: bun-linux-x64
-            native_package: "@opentui/core-linux-x64-musl"
+            native_package: "@opentui/core-linux-x64"
             asset: all-configs-tui-linux-x64
           - os: ubuntu-24.04-arm
             target: bun-linux-arm64
-            native_package: "@opentui/core-linux-arm64-musl"
+            native_package: "@opentui/core-linux-arm64"
             asset: all-configs-tui-linux-arm64
     runs-on: ${{ matrix.os }}
     steps:
@@ -61,7 +61,6 @@ jobs:
         run: >
           bun run build-release.ts
           ${{ matrix.target }} ${{ matrix.asset }}
-          ${{ runner.os == 'Linux' && 'musl' || '' }}
 
       - name: Smoke test host-native executable
         if: matrix.target == 'bun-darwin-arm64' || matrix.target == 'bun-linux-x64' || matrix.target == 'bun-linux-arm64'
