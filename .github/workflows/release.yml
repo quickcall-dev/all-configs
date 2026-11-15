@@ -107,6 +107,18 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           scripts/prepare-npm-packages.sh "$version" npm-binaries npm-packages
 
+      - name: Verify npm authentication
+        # E404 on publish PUT usually means the token lacks publish access
+        # to the @quickcall scope (npm hides forbidden packages behind 404),
+        # or the secret drifted from the real token. Fail here with a clear
+        # signal instead of deep in the publish loop. The sha256 fingerprint
+        # lets us compare the repo secret against a known-good token.
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm whoami
+          echo "token sha256: $(printf '%s' "$NODE_AUTH_TOKEN" | sha256sum | cut -d' ' -f1)"
+
       - name: Publish npm packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
