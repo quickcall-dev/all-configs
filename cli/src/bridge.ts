@@ -164,15 +164,29 @@ export function feedLines(
   return { lines: parts.map(collapse), display: collapse(buffer.partial) }
 }
 
+/**
+ * Quote one argv token for passing through `sh -c` (util-linux script's
+ * -c flag runs the command string via the shell).
+ */
+function shellQuote(token: string): string {
+  return `'${token.replace(/'/g, `'\\''`)}'`
+}
+
 export function runJob(argv: string[], events: JobEvents): JobHandle {
   // macOS `script -q /dev/null <cmd...>` allocates a pty for the child.
-  const pty = openReplyPty()
+  // util-linux script uses a different syntax and, without -e, reports its
+  // own exit status instead of the child's.
+  const linux = process.platform === "linux"
+  const scriptArgs = linux
+    ? ["-q", "-e", "-c", argv.map(shellQuote).join(" "), "/dev/null"]
+    : ["-q", "/dev/null", ...argv]
   // `script` rejects socket stdin (Bun pipes are sockets and its tcgetattr
   // fails); a real pty slave keeps typed replies flowing to the installer.
+  const pty = openReplyPty()
   const stdio: [number, "pipe", "pipe"] | ["ignore", "pipe", "pipe"] = pty
     ? [pty.slaveFd, "pipe", "pipe"]
     : ["ignore", "pipe", "pipe"]
-  const proc = Bun.spawn(["script", "-q", "/dev/null", ...argv], {
+  const proc = Bun.spawn(["script", ...scriptArgs], {
     cwd: REPO_ROOT,
     env: { ...process.env, TERM: "xterm-256color", ALL_CONFIGS_TUI: "1" } as Record<string, string>,
     stdio: stdio as [number, "pipe", "pipe", ...unknown[]],
@@ -185,18 +199,24 @@ export function runJob(argv: string[], events: JobEvents): JobHandle {
     return code
   })()
 
-  ;(async () => {
-    const decoder = new TextDecoder()
-    const buffer = makeLineBuffer()
-    for await (const chunk of proc.stdout) {
-      const { lines, display } = feedLines(buffer, decoder.decode(chunk, { stream: true }))
+  // stdout and stderr each get their own line buffer; both feed the same
+  // handlers so error output (e.g. sudo prompts, failures) is never lost.
+  const pump = (stream: ReadableStream<Uint8Array>) =>
+    (async () => {
+      const decoder = new TextDecoder()
+      const buffer = makeLineBuffer()
+      for await (const chunk of stream) {
+        const { lines, display } = feedLines(buffer, decoder.decode(chunk, { stream: true }))
+        for (const line of lines) events.onLine(line)
+        events.onPartial(display)
+      }
+      const { lines, display } = feedLines(buffer, decoder.decode())
       for (const line of lines) events.onLine(line)
       events.onPartial(display)
-    }
-    const { lines, display } = feedLines(buffer, decoder.decode())
-    for (const line of lines) events.onLine(line)
-    events.onPartial(display)
-  })().catch(() => {})
+    })().catch(() => {})
+
+  pump(proc.stdout)
+  pump(proc.stderr)
 
   return {
     write(text: string) {
