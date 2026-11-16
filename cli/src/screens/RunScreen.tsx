@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { useKeyboard } from "@opentui/react"
+import { useKeyboard, useRenderer } from "@opentui/react"
 import { appendFileSync, mkdirSync } from "node:fs"
 import type { Job, Module } from "../types"
 import { jobArgv, logDir, runJob, stripAnsi, type JobHandle } from "../bridge"
@@ -30,9 +30,11 @@ export interface RunScreenProps {
 }
 
 export function RunScreen(props: RunScreenProps) {
+  const renderer = useRenderer()
   const [jobs, setJobs] = useState<Job[]>(props.jobs)
   const [lines, setLines] = useState<string[]>([])
   const [live, setLive] = useState("")
+  const [copied, setCopied] = useState(false)
   const [running, setRunning] = useState(true)
   const [aborted, setAborted] = useState(false)
   const [replyFocused, setReplyFocused] = useState(false)
@@ -190,7 +192,23 @@ export function RunScreen(props: RunScreenProps) {
     void runAll(failed)
   }
 
+  const copyLog = () => {
+    // OSC52 works over plain SSH (terminal permitting); it is the only
+    // clipboard mechanism available on a remote host.
+    const text = linesRef.current.join("\n")
+    // Keep the OSC52 payload well under the ~74KB safe base64 limit.
+    const clipped = text.length > 50000 ? text.slice(-50000) : text
+    const sent = (renderer as unknown as { copyToClipboardOSC52?: (t: string) => boolean })
+      .copyToClipboardOSC52?.(clipped)
+    setCopied(sent === true)
+    setTimeout(() => setCopied(false), 3000)
+  }
+
   useKeyboard((key) => {
+    if (key.name === "c" && !replyFocused) {
+      copyLog()
+      return
+    }
     if (key.ctrl && key.name === "r") {
       retryFailed()
       return
@@ -353,6 +371,8 @@ export function RunScreen(props: RunScreenProps) {
       <box style={{ flexDirection: "row", height: 1, marginTop: 1, marginBottom: 1 }}>
         <text fg={theme.muted}>
           {running ? "  esc abort" : "  esc back · ctrl+r retry failed"}
+          {"  ·  c copy log"}
+          {copied ? "  ·  ✓ copied (osc52)" : ""}
           {logPath ? `  ·  log ${logPath.replace(process.env.HOME ?? "", "~")}` : ""}
         </text>
       </box>
