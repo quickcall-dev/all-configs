@@ -21,6 +21,17 @@ def main() -> int:
 
     root = Path(__file__).resolve().parents[1]
     bun = shutil.which("bun")
+    if not bun:
+        # Bun is often installed to ~/.bun/bin by the official script while
+        # the invoking shell (install chains, tmux, sudo) never sources the
+        # rc files that add it to PATH.
+        for candidate in (
+            Path.home() / ".bun" / "bin" / "bun",
+            Path.home() / ".local" / "share" / "bun" / "bun",
+        ):
+            if candidate.is_file() and os.access(candidate, os.X_OK):
+                bun = str(candidate)
+                break
     if bun:
         os.chdir(root)
         os.execvp(bun, [bun, "run", "cli/src/index.tsx"])
