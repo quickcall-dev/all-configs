@@ -48,17 +48,28 @@ case "${1:-}" in
 esac
 
 # Direct install mode: ./install.sh tmux nvim
+# Extra args after a module name are passed to that module's install script:
+#   ./install.sh skills              → install all skills
+#   ./install.sh skills doc          → install only the named skills
 if [[ $# -gt 0 ]]; then
-    for mod in "$@"; do
+    mod=""
+    declare -a mod_args=()
+    run_module() {
+        bash "$MODULES_DIR/$mod/install.sh" "${mod_args[@]}" || exit 1
+    }
+    for tok in "$@"; do
         # module names are plain directory names; reject paths like ../x
-        if [[ ! "$mod" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || [[ ! -f "$MODULES_DIR/$mod/install.sh" ]]; then
-            fail "Unknown module: $mod (see ./install.sh --list)"
+        if [[ "$tok" =~ ^[a-z0-9][a-z0-9_-]*$ ]] && [[ -f "$MODULES_DIR/$tok/install.sh" ]]; then
+            [[ -n "$mod" ]] && run_module
+            mod="$tok"; mod_args=()
+        elif [[ -n "$mod" ]]; then
+            mod_args+=("$tok")
+        else
+            fail "Unknown module: $tok (see ./install.sh --list)"
             exit 1
         fi
     done
-    for mod in "$@"; do
-        bash "$MODULES_DIR/$mod/install.sh"
-    done
+    [[ -n "$mod" ]] && run_module
     exit 0
 fi
 

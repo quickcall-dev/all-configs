@@ -1,4 +1,4 @@
 name = "skills"
-description = "Personal QuickCall skills (doc, markdown-to-pdf, product-ui-kit) for Claude Code, Codex, and Pi"
+description = "Personal QuickCall skills (diagram-creator, doc, html-creator, markdown-to-pdf, onion-explainer, product-ui-kit, python-code-dev, python-notebook-dev, technical-manual) for Claude Code, Codex, and Pi"
 platforms = ["mac", "linux"]
 kind = "config"
